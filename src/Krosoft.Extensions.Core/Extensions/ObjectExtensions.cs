@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Krosoft.Extensions.Core.Helpers;
+using Krosoft.Extensions.Core.Models;
 using Newtonsoft.Json;
 
 namespace Krosoft.Extensions.Core.Extensions;
@@ -214,4 +215,6 @@ public static class ObjectExtensions
 
         return token;
     }
+
+    public static Result<T> ToSuccessResult<T>(this T value) => Result<T>.Success(value);
 }

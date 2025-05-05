@@ -18,14 +18,12 @@ public class StreamExtensionsTests
     [TestMethod]
     public void ToBase64_Ok()
     {
-        using (var fs = File.Create("test.txt"))
-        {
-            var info = new UTF8Encoding(true).GetBytes("test");
-            fs.Write(info, 0, info.Length);
+        using var fs = File.Create("test.txt");
+        var info = new UTF8Encoding(true).GetBytes("test");
+        fs.Write(info, 0, info.Length);
 
-            var base64 = fs.ToBase64();
-            Check.That(base64).IsEqualTo("dGVzdA==");
-        }
+        var base64 = fs.ToBase64();
+        Check.That(base64).IsEqualTo("dGVzdA==");
     }
 
     [TestMethod]
