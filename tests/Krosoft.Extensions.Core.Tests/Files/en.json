@@ -1,0 +1,8 @@
+﻿{
+  "titre": "Forgotten password",
+  "salutation": "Hello, {{nom}}!",
+  "contenu": "Did you lose your password ? Don't panic, we got you, just click below and follow the lead :",
+  "bouton": "Reset password",
+  "warning": "If you are not responsible for this action, please ignore this message."
+
+}
