@@ -75,11 +75,9 @@ public static class StreamExtensions
 
     public static byte[] ToByte(this Stream input)
     {
-        using (var ms = new MemoryStream())
-        {
-            input.CopyTo(ms);
-            return ms.ToArray();
-        }
+        using var ms = new MemoryStream();
+        input.CopyTo(ms);
+        return ms.ToArray();
     }
 
     public static void Write(this BinaryWriter writer, DateTimeOffset value)

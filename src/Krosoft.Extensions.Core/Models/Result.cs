@@ -35,4 +35,14 @@ public readonly struct Result<T>
     public static Result<T> Success(T value) => new Result<T>(value);
 
     public static Result<T> Failure(Exception e) => new Result<T>(e);
+
+    public Result<TU> Map<TU>(Func<T, TU> transform) =>
+        IsSuccess
+            ? Result<TU>.Success(transform(Value!))
+            : Result<TU>.Failure(Exception!);
+
+    public Result<TU> Bind<TU>(Func<T, Result<TU>> transform) =>
+        IsSuccess
+            ? transform(Value!)
+            : Result<TU>.Failure(Exception!);
 }
