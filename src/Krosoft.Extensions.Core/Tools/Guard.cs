@@ -24,4 +24,40 @@ public static class Guard
             throw new KrosoftTechnicalException($"La variable '{argumentName}' est vide ou non renseignée.");
         }
     }
+
+    [SecuritySafeCritical]
+    public static void IsNotNullOrEmpty(string argumentName, [ValidatedNotNull] string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            throw new KrosoftTechnicalException($"La variable '{argumentName}' est vide ou non renseignée.");
+        }
+    }
+
+    [SecuritySafeCritical]
+    public static void IsNotNullOrEmpty<T>(string argumentName, [ValidatedNotNull] T[]? value)
+    {
+        if (value == null || value.Length == 0)
+        {
+            throw new KrosoftTechnicalException($"La variable '{argumentName}' est vide ou non renseignée.");
+        }
+    }
+
+    [SecuritySafeCritical]
+    public static void IsNotNullOrEmpty<T>(string argumentName, [ValidatedNotNull] List<T>? value)
+    {
+        if (value == null || value.Count == 0)
+        {
+            throw new KrosoftTechnicalException($"La variable '{argumentName}' est vide ou non renseignée.");
+        }
+    }
+
+    [SecuritySafeCritical]
+    public static void IsNotNullOrEmpty(string argumentName, [ValidatedNotNull] long? value)
+    {
+        if (value == null || value == 0)
+        {
+            throw new KrosoftTechnicalException($"La variable '{argumentName}' est vide ou non renseignée.");
+        }
+    }
 }
