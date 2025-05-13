@@ -1,18 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
+		<None Remove="Files\edi.edi" />
 		<None Remove="Files\en.json" />
 		<None Remove="Files\import_assets.zip" />
 		<None Remove="Files\Item.json" />
 		<None Remove="Files\sample.txt" />
 		<None Remove="Files\sample1.pdf" />
+		<None Remove="Files\xml.xml" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="Files\edi.edi" />
 		<EmbeddedResource Include="Files\en.json" />
 		<EmbeddedResource Include="Files\import_assets.zip" />
 		<EmbeddedResource Include="Files\Item.json" />
 		<EmbeddedResource Include="Files\sample.txt" />
 		<EmbeddedResource Include="Files\sample1.pdf" />
+		<EmbeddedResource Include="Files\xml.xml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Krosoft.Extensions.Testing" Version="2025.4.29.1388" />

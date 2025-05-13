@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Krosoft.Extensions.Core.Extensions;
 using Krosoft.Extensions.Core.Helpers;
 
 namespace Krosoft.Extensions.Core.Tests.Helpers;
