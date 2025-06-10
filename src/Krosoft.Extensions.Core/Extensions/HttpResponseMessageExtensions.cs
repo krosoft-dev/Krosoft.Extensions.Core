@@ -271,7 +271,7 @@ public static class HttpResponseMessageExtensions
             var obj = JsonConvert.DeserializeObject<KrosoftFunctionalException>(json, new KrosoftFunctionalExceptionConverter());
             if (obj != null)
             {
-                throw obj;
+                return obj;
             }
         }
 
@@ -280,7 +280,7 @@ public static class HttpResponseMessageExtensions
             var obj = JsonConvert.DeserializeObject<KrosoftTechnicalException>(json, new KrosoftTechnicalExceptionConverter());
             if (obj != null)
             {
-                throw obj;
+                return obj;
             }
         }
 
@@ -289,10 +289,10 @@ public static class HttpResponseMessageExtensions
         {
             if (Enum.TryParse(errorDto.Code.ToString(), out HttpStatusCode value) && Enum.IsDefined(typeof(HttpStatusCode), value))
             {
-                throw new HttpException(value, errorDto.Message);
+                return new HttpException(value, errorDto.Message);
             }
 
-            throw new HttpException(statusCode, errorDto.Message);
+            return new HttpException(statusCode, errorDto.Message);
         }
 
         return null;

@@ -21,6 +21,7 @@
 	<ItemGroup>
 	  <PackageReference Include="Krosoft.Extensions.Testing" Version="2025.4.29.1388" />
 	  <PackageReference Include="LinqKit.Core" Version="1.2.8" />
+	  <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\samples\Krosoft.Extensions.Samples.Library\Krosoft.Extensions.Samples.Library.csproj" />
