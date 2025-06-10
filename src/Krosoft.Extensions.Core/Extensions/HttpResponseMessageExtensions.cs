@@ -317,10 +317,10 @@ public static class HttpResponseMessageExtensions
         var isValid = JsonHelper.IsValid(json);
         if (isValid)
         {
-            var obj = JsonConvert.DeserializeObject<ErrorApiDto>(json);
+            var obj = JsonConvert.DeserializeObject<ErrorDto>(json);
             if (obj != null)
             {
-                if (Enum.TryParse(obj.StatusCode, out HttpStatusCode value) && Enum.IsDefined(typeof(HttpStatusCode), value))
+                if (Enum.TryParse(obj.Code.ToString(), out HttpStatusCode value) && Enum.IsDefined(typeof(HttpStatusCode), value))
                 {
                     throw new HttpException(value, obj.Message);
                 }
@@ -339,10 +339,10 @@ public static class HttpResponseMessageExtensions
         var isValid = JsonHelper.IsValid(json);
         if (isValid)
         {
-            var obj = JsonConvert.DeserializeObject<ErrorApiDto>(json);
+            var obj = JsonConvert.DeserializeObject<ErrorDto>(json);
             if (obj != null)
             {
-                if (Enum.TryParse(obj.StatusCode, out HttpStatusCode value) && Enum.IsDefined(typeof(HttpStatusCode), value))
+                if (Enum.TryParse(obj.Code.ToString(), out HttpStatusCode value) && Enum.IsDefined(typeof(HttpStatusCode), value))
                 {
                     throw new HttpException(value, obj.Message);
                 }

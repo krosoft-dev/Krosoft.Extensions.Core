@@ -6,7 +6,7 @@ namespace Krosoft.Extensions.Core.Converters;
 
 public class KrosoftTechnicalExceptionConverter : JsonConverter
 {
-    public override bool CanConvert(Type objectType) => objectType == typeof(KrosoftTechnicalException );
+    public override bool CanConvert(Type objectType) => objectType == typeof(KrosoftTechnicalException);
 
     public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {

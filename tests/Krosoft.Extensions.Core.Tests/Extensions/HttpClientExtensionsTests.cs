@@ -13,7 +13,7 @@ namespace Krosoft.Extensions.Core.Tests.Extensions;
 public class HttpClientExtensionsTests : BaseTest
 {
     [TestMethod]
-    public async Task DeleteAsJsonAsync_SendsDeleteRequestWithJsonContent()
+    public async Task DeleteAsNewtonsoftJson_SendsDeleteRequestWithJsonContent()
     {
         // Arrange
         var requestData = new { Name = "Test" };
@@ -32,7 +32,7 @@ public class HttpClientExtensionsTests : BaseTest
         var httpClient = new HttpClient(httpMessageHandlerMock.Object);
 
         // Act
-        var response = await httpClient.DeleteAsJsonAsync(requestUri, requestData);
+        var response = await httpClient.DeleteAsNewtonsoftJsonAsync(requestUri, requestData);
 
         // Assert
         Check.That(response).IsNotNull();
