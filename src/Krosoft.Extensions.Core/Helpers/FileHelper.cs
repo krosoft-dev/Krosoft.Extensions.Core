@@ -128,34 +128,37 @@ public static class FileHelper
         return encodedData;
     }
 
-    public static string ReadAsHash(string filePath)
+    public static string ReadAsHash(string filePath, HashAlgorithm hashAlgorithm)
     {
         Guard.IsNotNullOrWhiteSpace(nameof(filePath), filePath);
+        Guard.IsNotNull(nameof(hashAlgorithm), hashAlgorithm);
 
-        using (var sha1 = SHA1.Create())
-        {
-            using (var inputStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-            {
-                var computeHash = sha1.ComputeHash(inputStream);
-
-                var fileHash = BitConverter.ToString(computeHash);
-
-                return fileHash;
-            }
-        }
+        using var stream = File.OpenRead(filePath);
+        return BitConverter.ToString(hashAlgorithm.ComputeHash(stream)).Replace("-", string.Empty);
     }
 
-    public static string ReadAsMd5Hash(string filePath)
+    public static string ReadAsHashMd5(string filePath)
     {
         Guard.IsNotNullOrWhiteSpace(nameof(filePath), filePath);
 
-        using (var md5 = MD5.Create())
-        {
-            using (var stream = File.OpenRead(filePath))
-            {
-                return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
-            }
-        }
+        using var hashAlgorithm = MD5.Create();
+        return ReadAsHash(filePath, hashAlgorithm);
+    }
+
+    public static string ReadAsHashSha1(string filePath)
+    {
+        Guard.IsNotNullOrWhiteSpace(nameof(filePath), filePath);
+
+        using var hashAlgorithm = SHA1.Create();
+        return ReadAsHash(filePath, hashAlgorithm);
+    }
+
+    public static string ReadAsHashSha256(string filePath)
+    {
+        Guard.IsNotNullOrWhiteSpace(nameof(filePath), filePath);
+
+        using var hashAlgorithm = SHA256.Create();
+        return ReadAsHash(filePath, hashAlgorithm);
     }
 
     public static IEnumerable<string> ReadAsStringArray(string filePath) => ReadAsStringArray(filePath, EncodingHelper.GetEuropeOccidentale());
