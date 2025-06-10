@@ -2,6 +2,7 @@
 using Krosoft.Extensions.Core.Extensions;
 using Krosoft.Extensions.Core.Models.Exceptions;
 using Krosoft.Extensions.Core.Models.Exceptions.Http;
+using Krosoft.Extensions.Samples.Library.Models.Xml;
 using Newtonsoft.Json;
 
 namespace Krosoft.Extensions.Core.Tests.Extensions;
@@ -99,5 +100,49 @@ public class HttpResponseMessageExtensionsTests
         var result = await response.EnsureAsync<dynamic>();
 
         Check.That(result?.Message).Equals("Success");
+    }
+
+    [TestMethod]
+    public async Task EnsureXmlAsync_Ok()
+    {
+        var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><header xmlns=\"mfp:anaf:dgti:spv:respUploadFisier:v1\" dateResponse=\"202503312230\" ExecutionStatus=\"0\" index_incarcare=\"5020282769\"/>";
+
+        var response = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(xml)
+        };
+
+        var depotXml = await response.EnsureXmlAsync<DepotXml>();
+
+        Check.That(depotXml).IsNotNull();
+        Check.That(depotXml?.DateResponse).Equals("202503312230");
+        Check.That(depotXml?.ExecutionStatus).Equals("0");
+        Check.That(depotXml?.NumeroFluxDepot).Equals("5020282769");
+        Check.That(depotXml?.Errors).IsEmpty();
+    }
+
+    [TestMethod]
+    public void EnsureXmlAsync_Ko()
+    {
+        var responseObject = new
+        {
+            Code = 400,
+            Message = "BadRequest",
+            Errors = new List<string>
+            {
+                "Id requis !"
+            }
+        };
+        var json = JsonConvert.SerializeObject(responseObject);
+        var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
+        {
+            Content = new StringContent(json)
+        };
+
+        Check.ThatCode(async () => await response.EnsureXmlAsync<DepotXml>())
+             .Throws<KrosoftFunctionalException>()
+             .WithMessage("Id requis !")
+             .And.WithProperty(x => x.Code, HttpStatusCode.BadRequest)
+             .And.WithProperty(x => x.Errors, new List<string> { "Id requis !" });
     }
 }
