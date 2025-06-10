@@ -5,7 +5,7 @@ namespace Krosoft.Extensions.Core.Helpers;
 
 public static class FileTypeHelper
 {
-    public static bool IsEdifact(byte[] fileBytes)
+    public static bool IsEdifact(ReadOnlySpan<byte> fileBytes)
     {
         Guard.IsNotNull(nameof(fileBytes), fileBytes);
 
@@ -14,7 +14,8 @@ public static class FileTypeHelper
             return false;
         }
 
-        var fileContent = Encoding.ASCII.GetString(fileBytes, 0, Math.Min(fileBytes.Length, 128));
+        var bytes = fileBytes.Slice(0, Math.Min(fileBytes.Length, 128));
+        var fileContent = Encoding.ASCII.GetString(bytes);
 
         // Un fichier EDIFACT commence généralement par "UNA" ou "UNB"
         if (fileContent.StartsWith("UNA") || fileContent.Contains("UNB+"))
@@ -44,7 +45,7 @@ public static class FileTypeHelper
         return false;
     }
 
-    public static bool IsZip(byte[] fileBytes)
+    public static bool IsZip(ReadOnlySpan<byte> fileBytes)
     {
         Guard.IsNotNull(nameof(fileBytes), fileBytes);
 
@@ -55,31 +56,34 @@ public static class FileTypeHelper
                fileBytes[3] == 0x04;
     }
 
-    public static bool IsPdf(byte[] fileBytes)
+    public static bool IsPdf(ReadOnlySpan<byte> fileBytes)
     {
         Guard.IsNotNull(nameof(fileBytes), fileBytes);
 
-        var fileHeader = Encoding.UTF8.GetString(fileBytes, 0, Math.Min(fileBytes.Length, 5));
+        var bytes = fileBytes.Slice(0, Math.Min(fileBytes.Length, 5));
+        var fileHeader = Encoding.UTF8.GetString(bytes);
         return fileHeader.StartsWith("%PDF-");
     }
 
-    public static bool IsXml(byte[] fileBytes)
+    public static bool IsXml(ReadOnlySpan<byte> fileBytes)
     {
         Guard.IsNotNull(nameof(fileBytes), fileBytes);
 
-        var fileHeader = Encoding.UTF8.GetString(fileBytes, 0, Math.Min(fileBytes.Length, 5));
+        var bytes = fileBytes.Slice(0, Math.Min(fileBytes.Length, 5));
+        var fileHeader = Encoding.UTF8.GetString(bytes);
         return fileHeader.StartsWith("<?xml");
     }
 
-    public static bool IsJson(byte[] fileBytes)
+    public static bool IsJson(ReadOnlySpan<byte> fileBytes)
     {
         Guard.IsNotNull(nameof(fileBytes), fileBytes);
 
-        var fileHeader = Encoding.UTF8.GetString(fileBytes, 0, Math.Min(fileBytes.Length, 1));
+        var bytes = fileBytes.Slice(0, Math.Min(fileBytes.Length, 1));
+        var fileHeader = Encoding.UTF8.GetString(bytes);
         return fileHeader == "{" || fileHeader == "[";
     }
 
-    public static bool IsGZip(byte[] fileBytes)
+    public static bool IsGZip(ReadOnlySpan<byte> fileBytes)
     {
         Guard.IsNotNull(nameof(fileBytes), fileBytes);
 

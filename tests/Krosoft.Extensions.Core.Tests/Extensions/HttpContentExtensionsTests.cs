@@ -10,13 +10,13 @@ namespace Krosoft.Extensions.Core.Tests.Extensions;
 public class HttpContentExtensionsTests : BaseTest
 {
     [TestMethod]
-    public async Task ReadAsJsonAsync_ParsesJsonContent()
+    public async Task ReadAsNewtonsoftJsonAsync_ParsesJsonContent()
     {
         var item = new Item { Code = "Test" };
         var jsonString = JsonConvert.SerializeObject(item);
         var content = new StringContent(jsonString, Encoding.UTF8, HttpClientExtensions.MediaTypeJson);
 
-        var result = await content.ReadAsJsonAsync<Item>();
+        var result = await content.ReadAsNewtonsoftJsonAsync<Item>();
 
         Check.That(result).IsNotNull();
         Check.That(result?.Code).Equals("Test");

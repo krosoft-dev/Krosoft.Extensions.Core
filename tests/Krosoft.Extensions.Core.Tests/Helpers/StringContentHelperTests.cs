@@ -38,7 +38,7 @@ public class StringContentHelperTests
 
     private static async Task CheckSerializationAsync(object data, string expectedJson)
     {
-        var httpContent = StringContentHelper.SerializeAsJson(data);
+        var httpContent = StringContentHelper.SerializeAsNewtonsoftJson(data);
 
         Check.That(httpContent).IsNotNull();
         Check.That(httpContent.Headers).HasSize(1);

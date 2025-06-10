@@ -13,7 +13,7 @@ namespace Krosoft.Extensions.Core.Tests.Extensions;
 public class HttpClientExtensionsTests : BaseTest
 {
     [TestMethod]
-    public async Task DeleteAsJsonAsync_SendsDeleteRequestWithJsonContent()
+    public async Task DeleteAsNewtonsoftJson_SendsDeleteRequestWithJsonContent()
     {
         // Arrange
         var requestData = new { Name = "Test" };
@@ -32,7 +32,7 @@ public class HttpClientExtensionsTests : BaseTest
         var httpClient = new HttpClient(httpMessageHandlerMock.Object);
 
         // Act
-        var response = await httpClient.DeleteAsJsonAsync(requestUri, requestData);
+        var response = await httpClient.DeleteAsNewtonsoftJsonAsync(requestUri, requestData);
 
         // Assert
         Check.That(response).IsNotNull();
@@ -280,28 +280,35 @@ public class HttpClientExtensionsTests : BaseTest
     }
 
     [TestMethod]
-    public void SetHeader_Ok()
+    public void AddOrUpdateHeader_Ok()
     {
         var scheme = "api";
         var token = "test-token";
-        var httpClient = new HttpClient().SetHeader(scheme, token).SetHeader(scheme, token);
+        var httpClient = new HttpClient().AddOrUpdateHeader(scheme, token)
+                                         .AddOrUpdateHeader(scheme, token);
 
         var headers = httpClient.DefaultRequestHeaders.ToDictionary(x => x.Key, x => x.Value);
         Check.That(headers).IsNotNull();
         Check.That(headers).HasSize(1);
-        Check.That(headers[scheme]).IsEqualTo(new List<string> { token, token });
+        Check.That(headers[scheme]).HasSize(1);
+        Check.That(headers[scheme].First()).IsEqualTo(token);
     }
 
     [TestMethod]
-    public void SetHeader_Multiple_Ok()
+    public void AddOrUpdateHeader_Multiple_Ok()
     {
         var scheme = "api";
         var token = "test-token";
-        var httpClient = new HttpClient().SetHeader(scheme, token, true).SetHeader(scheme, token, true);
+        var httpClient = new HttpClient().SetBearerToken("my-bear")
+                                         .AddOrUpdateHeader(scheme, token)
+                                         .AddOrUpdateHeader(scheme, token);
 
         var headers = httpClient.DefaultRequestHeaders.ToDictionary(x => x.Key, x => x.Value);
         Check.That(headers).IsNotNull();
-        Check.That(headers).HasSize(1);
-        Check.That(headers[scheme]).IsEqualTo(new List<string> { token });
+        Check.That(headers).HasSize(2);
+        Check.That(headers["Authorization"]).HasSize(1);
+        Check.That(headers["Authorization"].First()).IsEqualTo("Bearer my-bear");
+        Check.That(headers[scheme]).HasSize(1);
+        Check.That(headers[scheme].First()).IsEqualTo(token);
     }
 }

@@ -23,8 +23,7 @@ public class StringExtensionsTests
 
     [DataTestMethod]
     [DataRow("", 5, "")]
-    [DataRow(null, 5, null)]
-    [DataRow("", 5, "")]
+    [DataRow(null, 5, null)] 
     [DataRow("abcdefgh", 3, "abc")]
     [DataRow("xyz", 10, "xyz")]
     [DataRow("12345", 0, "")]
