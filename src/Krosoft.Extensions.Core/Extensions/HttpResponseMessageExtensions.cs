@@ -11,32 +11,6 @@ namespace Krosoft.Extensions.Core.Extensions;
 
 public static class HttpResponseMessageExtensions
 {
-    public static Task EnsureAsync(this Task<HttpResponseMessage> task,
-                                   CancellationToken cancellationToken = default)
-        => task.EnsureAsync(null, cancellationToken);
-
-    public static async Task EnsureAsync(this Task<HttpResponseMessage> task,
-                                         Func<HttpStatusCode, string, Exception>? onError,
-                                         CancellationToken cancellationToken = default)
-    {
-        var httpResponseMessage = await task;
-
-        await httpResponseMessage.EnsureAsync(onError, cancellationToken);
-    }
-
-    public static Task<T?> EnsureAsync<T>(this Task<HttpResponseMessage> task,
-                                          CancellationToken cancellationToken = default) =>
-        task.EnsureAsync<T?>(null, cancellationToken);
-
-    public static async Task<T?> EnsureAsync<T>(this Task<HttpResponseMessage> task,
-                                                Func<HttpStatusCode, string, Exception>? onError,
-                                                CancellationToken cancellationToken = default)
-    {
-        var httpResponseMessage = await task;
-
-        return await httpResponseMessage.EnsureAsync<T?>(onError, cancellationToken);
-    }
-
     public static async Task EnsureAsync(this HttpResponseMessage httpResponseMessage,
                                          CancellationToken cancellationToken = default)
     {
@@ -50,22 +24,10 @@ public static class HttpResponseMessageExtensions
             var isValid = JsonHelper.IsValid(json);
             if (isValid)
             {
-                if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
+                var exception = TryThrowFromJson(httpResponseMessage.StatusCode, json);
+                if (exception != null)
                 {
-                    var obj = JsonConvert.DeserializeObject<KrosoftFunctionalException>(json, new KrosoftFunctionalExceptionConverter());
-                    if (obj != null)
-                    {
-                        throw obj;
-                    }
-                }
-
-                if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var obj = JsonConvert.DeserializeObject<KrosoftTechnicalException>(json, new KrosoftTechnicalExceptionConverter());
-                    if (obj != null)
-                    {
-                        throw obj;
-                    }
+                    throw exception;
                 }
             }
 
@@ -111,6 +73,12 @@ public static class HttpResponseMessageExtensions
                 {
                     throw ex;
                 }
+
+                var exception = TryThrowFromJson(httpResponseMessage.StatusCode, json);
+                if (exception != null)
+                {
+                    throw exception;
+                }
             }
 
             throw new HttpException(httpResponseMessage.StatusCode,
@@ -118,16 +86,32 @@ public static class HttpResponseMessageExtensions
         }
     }
 
-    public static async Task<string?> EnsureStringAsync(this Task<HttpResponseMessage> task,
+    public static async Task<T?> EnsureXmlAsync<T>(this HttpResponseMessage httpResponseMessage,
+                                                   CancellationToken cancellationToken = default)
+    {
+        var response = await httpResponseMessage.EnsureStringAsync(cancellationToken);
+        return XmlHelper.Deserialize<T>(response);
+    }
+
+    public static async Task<Result<T?>> EnsureResultXmlAsync<T>(this HttpResponseMessage httpResponseMessage,
+                                                                 CancellationToken cancellationToken = default)
+    {
+        var response = await httpResponseMessage.EnsureResultStringAsync(cancellationToken);
+        if (response.IsFaulted)
+        {
+            return Result<T?>.Failure(response.Exception!);
+        }
+
+        return Result<T?>.Success(XmlHelper.Deserialize<T>(response.Value));
+    }
+
+    public static async Task<string?> EnsureStringAsync(this HttpResponseMessage httpResponseMessage,
                                                         CancellationToken cancellationToken = default)
     {
-        var httpResponseMessage = await task;
-
         if (httpResponseMessage.IsSuccessStatusCode)
         {
-            var template = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
-
-            return template;
+            var value = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
+            return value;
         }
 
         await httpResponseMessage.ManageErrorAsync(cancellationToken);
@@ -135,42 +119,21 @@ public static class HttpResponseMessageExtensions
         return null;
     }
 
-    public static Task<IFileStream?> EnsureStreamAsync(this Task<HttpResponseMessage> task,
-                                                       CancellationToken cancellationToken = default) =>
-        task.EnsureStreamAsync(null, cancellationToken);
-
-    public static async Task<IFileStream?> EnsureStreamAsync(this Task<HttpResponseMessage> task,
-                                                             Func<HttpStatusCode, string, Exception>? onError,
-                                                             CancellationToken cancellationToken = default)
+    public static async Task<Result<string?>> EnsureResultStringAsync(this HttpResponseMessage httpResponseMessage,
+                                                                      CancellationToken cancellationToken = default)
     {
-        var httpResponseMessage = await task;
-
         if (httpResponseMessage.IsSuccessStatusCode)
         {
-            var contentType = httpResponseMessage.Content.Headers.ContentType?.ToString() ?? string.Empty;
-            var contentDisposition = httpResponseMessage.Content.Headers.ContentDisposition?.FileName?.Trim('"') ?? string.Empty;
+            var content = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
 
-            var stream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken);
-
-            return new GenericFileStream(stream, contentDisposition, contentType);
+            return Result<string?>.Success(content);
         }
 
-        await httpResponseMessage.EnsureAsync(onError, cancellationToken);
-        return null;
+        return await httpResponseMessage.ManageResultErrorAsync<string?>(cancellationToken);
     }
 
-    public static async Task<IFileStream?> EnsureStreamAsync2(this Task<HttpResponseMessage> task,
-                                                              Func<HttpStatusCode, string, Exception>? onError,
-                                                              CancellationToken cancellationToken = default)
-    {
-        var httpResponseMessage = await task;
-
-        return await httpResponseMessage.EnsureStreamAsync2(onError, cancellationToken);
-    }
-
-    public static async Task<IFileStream?> EnsureStreamAsync2(this HttpResponseMessage httpResponseMessage,
-                                                              Func<HttpStatusCode, string, Exception>? onError,
-                                                              CancellationToken cancellationToken = default)
+    public static async Task<Result<IFileStream?>> EnsureResultStreamAsync(this HttpResponseMessage httpResponseMessage,
+                                                                           CancellationToken cancellationToken = default)
     {
         if (httpResponseMessage.IsSuccessStatusCode)
         {
@@ -179,28 +142,10 @@ public static class HttpResponseMessageExtensions
 
             var stream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken);
 
-            return new GenericFileStream(stream, contentDisposition, contentType);
+            return Result<IFileStream?>.Success(new GenericFileStream(stream, contentDisposition, contentType));
         }
 
-        await httpResponseMessage.EnsureAsync(onError, cancellationToken);
-        return null;
-    }
-
-    public static Task<Result<T?>> EnsureResultAsync<T>(this Task<HttpResponseMessage> task,
-                                                        CancellationToken cancellationToken = default) =>
-        task.EnsureResultAsync<T>(null, cancellationToken);
-
-    public static Task EnsureResultAsync(this Task<HttpResponseMessage> task,
-                                         CancellationToken cancellationToken = default)
-        => task.EnsureAsync(null, cancellationToken);
-
-    public static async Task<Result<T?>> EnsureResultAsync<T>(this Task<HttpResponseMessage> task,
-                                                              Func<HttpStatusCode, string, Exception>? onError,
-                                                              CancellationToken cancellationToken = default)
-    {
-        var httpResponseMessage = await task;
-
-        return await httpResponseMessage.EnsureResultAsync<T?>(onError, cancellationToken);
+        return await httpResponseMessage.ManageResultErrorAsync<IFileStream?>(cancellationToken);
     }
 
     public static async Task EnsureResultAsync(this HttpResponseMessage httpResponseMessage,
@@ -214,24 +159,12 @@ public static class HttpResponseMessageExtensions
             var json = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
 
             var isValid = JsonHelper.IsValid(json);
-            if (isValid && httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
+            if (isValid)
             {
-                if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
+                var exception = TryThrowFromJson(httpResponseMessage.StatusCode, json);
+                if (exception != null)
                 {
-                    var obj = JsonConvert.DeserializeObject<KrosoftFunctionalException>(json, new KrosoftFunctionalExceptionConverter());
-                    if (obj != null)
-                    {
-                        throw obj;
-                    }
-                }
-
-                if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var obj = JsonConvert.DeserializeObject<KrosoftTechnicalException>(json, new KrosoftTechnicalExceptionConverter());
-                    if (obj != null)
-                    {
-                        throw obj;
-                    }
+                    throw exception;
                 }
             }
 
@@ -243,6 +176,24 @@ public static class HttpResponseMessageExtensions
     public static Task<Result<T?>> EnsureResultAsync<T>(this HttpResponseMessage httpResponseMessage,
                                                         CancellationToken cancellationToken = default) =>
         httpResponseMessage.EnsureResultAsync<T>(null, cancellationToken);
+
+    public static async Task<IFileStream?> EnsureStreamAsync(this HttpResponseMessage httpResponseMessage,
+                                                             Func<HttpStatusCode, string, Exception>? onError,
+                                                             CancellationToken cancellationToken = default)
+    {
+        if (httpResponseMessage.IsSuccessStatusCode)
+        {
+            var contentType = httpResponseMessage.Content.Headers.ContentType?.ToString() ?? string.Empty;
+            var contentDisposition = httpResponseMessage.Content.Headers.ContentDisposition?.FileName?.Trim('"') ?? string.Empty;
+
+            var stream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken);
+
+            return new GenericFileStream(stream, contentDisposition, contentType);
+        }
+
+        await httpResponseMessage.EnsureAsync(onError, cancellationToken);
+        return null;
+    }
 
     public static async Task<Result<T?>> EnsureResultAsync<T>(this HttpResponseMessage httpResponseMessage,
                                                               Func<HttpStatusCode, string, Exception>? onError,
@@ -265,49 +216,17 @@ public static class HttpResponseMessageExtensions
                 {
                     return Result<T?>.Failure(ex);
                 }
+
+                var exception = TryThrowFromJson(httpResponseMessage.StatusCode, json);
+                if (exception != null)
+                {
+                    return Result<T?>.Failure(exception);
+                }
             }
 
             return Result<T?>.Failure(new HttpException(httpResponseMessage.StatusCode,
                                                         httpResponseMessage.ReasonPhrase));
         }
-    }
-
-    public static async Task<T?> EnsureXmlAsync<T>(this Task<HttpResponseMessage> task,
-                                                   CancellationToken cancellationToken = default)
-    {
-        var response = await task
-            .EnsureStringAsync(cancellationToken);
-
-        return XmlHelper.Deserialize<T>(response);
-    }
-
-    public static async Task<Result<T?>> EnsureResultXmlAsync<T>(this Task<HttpResponseMessage> task,
-                                                                 CancellationToken cancellationToken = default)
-    {
-        var response = await task
-            .EnsureResultStringAsync(cancellationToken);
-
-        if (response.IsFaulted)
-        {
-            return Result<T?>.Failure(response.Exception!);
-        }
-
-        return Result<T?>.Success(XmlHelper.Deserialize<T>(response.Value));
-    }
-
-    public static async Task<Result<string?>> EnsureResultStringAsync(this Task<HttpResponseMessage> task,
-                                                                      CancellationToken cancellationToken = default)
-    {
-        var httpResponseMessage = await task;
-
-        if (httpResponseMessage.IsSuccessStatusCode)
-        {
-            var content = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
-
-            return Result<string?>.Success(content);
-        }
-
-        return await httpResponseMessage.ManageResultErrorAsync<string?>(cancellationToken);
     }
 
     public static async Task ManageErrorAsync(this HttpResponseMessage httpResponseMessage, CancellationToken cancellationToken)
@@ -317,15 +236,10 @@ public static class HttpResponseMessageExtensions
         var isValid = JsonHelper.IsValid(json);
         if (isValid)
         {
-            var obj = JsonConvert.DeserializeObject<ErrorDto>(json);
-            if (obj != null)
+            var exception = TryThrowFromJson(httpResponseMessage.StatusCode, json);
+            if (exception != null)
             {
-                if (Enum.TryParse(obj.Code.ToString(), out HttpStatusCode value) && Enum.IsDefined(typeof(HttpStatusCode), value))
-                {
-                    throw new HttpException(value, obj.Message);
-                }
-
-                throw new HttpException(httpResponseMessage.StatusCode, obj.Message);
+                throw exception;
             }
         }
 
@@ -339,20 +253,48 @@ public static class HttpResponseMessageExtensions
         var isValid = JsonHelper.IsValid(json);
         if (isValid)
         {
-            var obj = JsonConvert.DeserializeObject<ErrorDto>(json);
-            if (obj != null)
+            var exception = TryThrowFromJson(httpResponseMessage.StatusCode, json);
+            if (exception != null)
             {
-                if (Enum.TryParse(obj.Code.ToString(), out HttpStatusCode value) && Enum.IsDefined(typeof(HttpStatusCode), value))
-                {
-                    throw new HttpException(value, obj.Message);
-                }
-
-                throw new HttpException(httpResponseMessage.StatusCode,
-                                        obj.Message);
+                throw exception;
             }
         }
 
         throw new HttpException(httpResponseMessage.StatusCode,
                                 httpResponseMessage.ReasonPhrase);
+    }
+
+    private static Exception? TryThrowFromJson(HttpStatusCode statusCode, string json)
+    {
+        if (statusCode == HttpStatusCode.BadRequest)
+        {
+            var obj = JsonConvert.DeserializeObject<KrosoftFunctionalException>(json, new KrosoftFunctionalExceptionConverter());
+            if (obj != null)
+            {
+                throw obj;
+            }
+        }
+
+        if (statusCode == HttpStatusCode.InternalServerError)
+        {
+            var obj = JsonConvert.DeserializeObject<KrosoftTechnicalException>(json, new KrosoftTechnicalExceptionConverter());
+            if (obj != null)
+            {
+                throw obj;
+            }
+        }
+
+        var errorDto = JsonConvert.DeserializeObject<ErrorDto>(json);
+        if (errorDto != null && errorDto.Code != 0 && !string.IsNullOrEmpty(errorDto.Message))
+        {
+            if (Enum.TryParse(errorDto.Code.ToString(), out HttpStatusCode value) && Enum.IsDefined(typeof(HttpStatusCode), value))
+            {
+                throw new HttpException(value, errorDto.Message);
+            }
+
+            throw new HttpException(statusCode, errorDto.Message);
+        }
+
+        return null;
     }
 }

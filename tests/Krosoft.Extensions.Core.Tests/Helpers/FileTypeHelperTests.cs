@@ -92,6 +92,16 @@ public class FileTypeHelperTests
     }
 
     [TestMethod]
+    public void IsPdf_WithTooShortBytes_ReturnsFalse()
+    {
+        var fileBytes = new byte[] { 0x1F, 0x8B };
+
+        var result = FileTypeHelper.IsPdf(fileBytes);
+
+        Check.That(result).IsFalse();
+    }
+
+    [TestMethod]
     public void IsPdf_Ok()
     {
         var fileBytesXml = Assembly.GetExecutingAssembly().Read("xml.xml").ReadAsByteArray();

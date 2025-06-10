@@ -55,17 +55,20 @@ public static class HttpClientExtensions
         return httpClient;
     }
 
-    public static HttpClient SetHeader(this HttpClient httpClient,
-                                       string name,
-                                       string value,
-                                       bool clear = false)
+    /// <summary>
+    /// Add (or update) the header with the specified <paramref name="name" />.
+    /// </summary>
+    /// <param name="client">Collection of headers.</param>
+    /// <param name="name">name of the header to add./update</param>
+    /// <param name="value">new value of the header.</param>
+    /// <remarks>
+    /// The header's value will be updated if already present in  <see cref="HttpClient.DefaultRequestHeaders" />.
+    /// </remarks>
+    public static HttpClient AddOrUpdateHeader(this HttpClient client, string name, string value)
     {
-        if (clear)
-        {
-            httpClient.DefaultRequestHeaders.Clear();
-        }
+        client.DefaultRequestHeaders.Remove(name);
+        client.DefaultRequestHeaders.TryAddWithoutValidation(name, value);
 
-        httpClient.DefaultRequestHeaders.Add(name, value);
-        return httpClient;
+        return client;
     }
 }

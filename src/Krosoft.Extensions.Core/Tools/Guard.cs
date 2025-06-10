@@ -17,6 +17,15 @@ public static class Guard
     }
 
     [SecuritySafeCritical]
+    public static void IsNotNull<T>(string argumentName, [ValidatedNotNull] ReadOnlySpan<T> value)
+    {
+        if (value.IsEmpty)
+        {
+            throw new KrosoftTechnicalException($"La variable '{argumentName}' n'est pas renseignée.");
+        }
+    }
+
+    [SecuritySafeCritical]
     public static void IsNotNullOrWhiteSpace(string argumentName, [ValidatedNotNull] string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
