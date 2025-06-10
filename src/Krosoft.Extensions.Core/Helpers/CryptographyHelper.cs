@@ -23,6 +23,12 @@ public static class CryptographyHelper
         return sha1.ComputeHash(input);
     }
 
+    public static byte[] HashSha256(byte[] input)
+    {
+        using var sha1 = SHA256.Create();
+        return sha1.ComputeHash(input);
+    }
+
     public static string HashSha256(string data, string secret, string salt)
     {
         using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret + salt));
