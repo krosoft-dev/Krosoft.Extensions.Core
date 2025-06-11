@@ -17,11 +17,11 @@ public static class Guard
     }
 
     [SecuritySafeCritical]
-    public static void IsNotNull<T>(string argumentName, [ValidatedNotNull] ReadOnlySpan<T> value)
+    public static void IsNotEmpty<T>(string argumentName, [ValidatedNotNull] ReadOnlySpan<T> value)
     {
         if (value.IsEmpty)
         {
-            throw new KrosoftTechnicalException($"La variable '{argumentName}' est vide ou non renseignée.");
+            throw new KrosoftTechnicalException($"La variable '{argumentName}' est vide.");
         }
     }
 
