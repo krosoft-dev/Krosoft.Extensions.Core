@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using JetBrains.Annotations;
 using Krosoft.Extensions.Core.Extensions;
+using Krosoft.Extensions.Core.Models.Dto;
 using Krosoft.Extensions.Core.Models.Exceptions;
 using Krosoft.Extensions.Core.Models.Exceptions.Http;
 using Krosoft.Extensions.Samples.Library.Models.Xml;
@@ -79,7 +80,6 @@ public class HttpResponseMessageExtensionsTests
              .Throws<HttpException>()
              .WithMessage("Bad Request")
              .And.WithProperty(x => x.Code, HttpStatusCode.BadRequest);
-        ;
     }
 
     [TestMethod]
@@ -91,7 +91,6 @@ public class HttpResponseMessageExtensionsTests
              .Throws<HttpException>()
              .WithMessage("Internal Server Error")
              .And.WithProperty(x => x.Code, HttpStatusCode.InternalServerError);
-        ;
     }
 
     [TestMethod]
@@ -239,13 +238,6 @@ public class HttpResponseMessageExtensionsTests
              .And.WithProperty(x => x.Code, HttpStatusCode.NotFound);
     }
 
-
-
-
-
-
-
-
     [TestMethod]
     public async Task EnsureResultXmlAsync_SuccessStatusCode_ReturnsSuccessResult()
     {
@@ -325,7 +317,7 @@ public class HttpResponseMessageExtensionsTests
     {
         var response = new HttpResponseMessage(HttpStatusCode.OK);
 
-          Check.ThatCode(async () => await response.EnsureResultAsync()).DoesNotThrow ();
+        Check.ThatCode(async () => await response.EnsureResultAsync()).DoesNotThrow();
     }
 
     [TestMethod]
@@ -350,7 +342,7 @@ public class HttpResponseMessageExtensionsTests
     }
 
     [TestMethod]
-    public    void EnsureResultStringAsync_ErrorWithJsonError_ThrowsException()
+    public void EnsureResultStringAsync_ErrorWithJsonError_ThrowsException()
     {
         var responseObject = new
         {
@@ -384,6 +376,63 @@ public class HttpResponseMessageExtensionsTests
         Check.That(result.Value).IsEmpty();
     }
 
+    [TestMethod]
+    public void EnsureAsync_ErrorDto_WithValidHttpStatusCode_ThrowsHttpException()
+    {
+        var responseObject = new ErrorDto
+        {
+            Code = 404,
+            Message = "Resource not found"
+        };
+        var json = JsonConvert.SerializeObject(responseObject);
+        var response = new HttpResponseMessage(HttpStatusCode.NotFound)
+        {
+            Content = new StringContent(json)
+        };
 
+        Check.ThatCode(async () => await response.EnsureAsync())
+             .Throws<HttpException>()
+             .WithMessage("Resource not found")
+             .And.WithProperty(x => x.Code, HttpStatusCode.NotFound);
+    }
 
+    [TestMethod]
+    public void EnsureAsync_ErrorDto_WithCustomCode_ThrowsHttpException()
+    {
+        var responseObject = new ErrorDto
+        {
+            Code = 499,
+            Message = "Custom error message"
+        };
+        var json = JsonConvert.SerializeObject(responseObject);
+        var response = new HttpResponseMessage(HttpStatusCode.NotFound)
+        {
+            Content = new StringContent(json)
+        };
+
+        Check.ThatCode(async () => await response.EnsureAsync())
+             .Throws<HttpException>()
+             .WithMessage("Custom error message")
+             .And.WithProperty(x => x.Code, HttpStatusCode.NotFound);
+    }
+
+    [TestMethod]
+    public void EnsureAsync_ErrorDto_WithZeroCode_ThrowsDefaultHttpException()
+    {
+        var responseObject = new ErrorDto
+        {
+            Code = 0,
+            Message = "Zero code error"
+        };
+        var json = JsonConvert.SerializeObject(responseObject);
+        var response = new HttpResponseMessage(HttpStatusCode.Gone)
+        {
+            Content = new StringContent(json)
+        };
+
+        Check.ThatCode(async () => await response.EnsureAsync())
+             .Throws<HttpException>()
+             .WithMessage("Gone")
+             .And.WithProperty(x => x.Code, HttpStatusCode.Gone);
+    }
 }
