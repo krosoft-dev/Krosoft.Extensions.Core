@@ -21,7 +21,7 @@ public static class Guard
     {
         if (value.IsEmpty)
         {
-            throw new KrosoftTechnicalException($"La variable '{argumentName}' n'est pas renseignée.");
+            throw new KrosoftTechnicalException($"La variable '{argumentName}' est vide ou non renseignée.");
         }
     }
 
