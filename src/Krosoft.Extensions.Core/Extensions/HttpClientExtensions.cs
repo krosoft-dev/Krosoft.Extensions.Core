@@ -14,34 +14,36 @@ public static class HttpClientExtensions
 
     public static async Task<HttpResponseMessage> PostAsNewtonsoftJsonAsync<T>(this HttpClient client,
                                                                                string requestUri,
-                                                                               T data)
-        => await client.PostAsync(requestUri, StringContentHelper.SerializeAsNewtonsoftJson(data));
-
-    public static Task<HttpResponseMessage> DeleteAsNewtonsoftJsonAsync<T>(this HttpClient httpClient, string requestUri, T data)
-        => httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, requestUri) { Content = StringContentHelper.SerializeAsNewtonsoftJson(data) });
+                                                                               T data,
+                                                                               CancellationToken cancellationToken = default)
+        => await client.PostAsync(requestUri, StringContentHelper.SerializeAsNewtonsoftJson(data), cancellationToken);
 
     public static Task<HttpResponseMessage> DeleteAsNewtonsoftJsonAsync<T>(this HttpClient httpClient,
                                                                            string requestUri,
                                                                            T data,
-                                                                           CancellationToken cancellationToken)
-        => httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, requestUri) { Content = StringContentHelper.SerializeAsNewtonsoftJson(data) }, cancellationToken);
-
-    public static Task<HttpResponseMessage> DeleteAsNewtonsoftJsonAsync<T>(this HttpClient httpClient,
-                                                                           Uri requestUri,
-                                                                           T data)
-        => httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, requestUri) { Content = StringContentHelper.SerializeAsNewtonsoftJson(data) });
+                                                                           CancellationToken cancellationToken = default)
+        => httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, requestUri)
+        {
+            Content = StringContentHelper.SerializeAsNewtonsoftJson(data)
+        }, cancellationToken);
 
     public static Task<HttpResponseMessage> DeleteAsNewtonsoftJsonAsync<T>(this HttpClient httpClient,
                                                                            Uri requestUri,
                                                                            T data,
-                                                                           CancellationToken cancellationToken)
-        => httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, requestUri) { Content = StringContentHelper.SerializeAsNewtonsoftJson(data) }, cancellationToken);
+                                                                           CancellationToken cancellationToken = default)
+        => httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, requestUri)
+        {
+            Content = StringContentHelper.SerializeAsNewtonsoftJson(data)
+        }, cancellationToken);
 
-    public static Task<HttpResponseMessage> GetAsync<T>(this HttpClient httpClient,
-                                                        string requestUri,
-                                                        T data,
-                                                        CancellationToken cancellationToken)
-        => httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, requestUri) { Content = StringContentHelper.SerializeAsNewtonsoftJson(data) }, cancellationToken);
+    public static Task<HttpResponseMessage> GetAsNewtonsoftAsync<T>(this HttpClient httpClient,
+                                                                    string requestUri,
+                                                                    T data,
+                                                                    CancellationToken cancellationToken = default)
+        => httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, requestUri)
+        {
+            Content = StringContentHelper.SerializeAsNewtonsoftJson(data)
+        }, cancellationToken);
 
     public static HttpClient SetBearerToken(this HttpClient httpClient,
                                             string token) =>
