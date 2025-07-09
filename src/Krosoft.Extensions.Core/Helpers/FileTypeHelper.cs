@@ -67,16 +67,78 @@ public static class FileTypeHelper
     {
         Guard.IsNotNull(nameof(fileBytes), fileBytes);
 
-        var fileHeader = Encoding.UTF8.GetString(fileBytes, 0, Math.Min(fileBytes.Length, 5));
-        return fileHeader.StartsWith("<?xml");
+        var startIndex = GetContentStartIndex(fileBytes);
+        if (startIndex >= fileBytes.Length)
+        {
+            return false;
+        }
+
+        // Vérifier XML : "<?xml"
+        if (HasMagicBytes(fileBytes, startIndex, [0x3C, 0x3F, 0x78, 0x6D, 0x6C]))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static int GetContentStartIndex(byte[] bytes)
+    {
+        var index = 0;
+
+        // Ignorer les BOM.
+        if (bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
+        {
+            index = 3; // UTF-8 BOM
+        }
+        else if (bytes.Length >= 2 && ((bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF)))
+        {
+            index = 2; // UTF-16 BOM
+        }
+
+        // Ignorer les espaces, tabs, retours à la ligne.
+        while (index < bytes.Length && (bytes[index] == 0x20 || bytes[index] == 0x09 || bytes[index] == 0x0A || bytes[index] == 0x0D))
+        {
+            index++;
+        }
+
+        return index;
+    }
+
+    private static bool HasMagicBytes(byte[] fileBytes, int startIndex, byte[] magicBytes)
+    {
+        if (startIndex + magicBytes.Length > fileBytes.Length)
+        {
+            return false;
+        }
+
+        for (var i = 0; i < magicBytes.Length; i++)
+        {
+            if (fileBytes[startIndex + i] != magicBytes[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static bool IsJson(byte[] fileBytes)
     {
         Guard.IsNotNull(nameof(fileBytes), fileBytes);
 
-        var fileHeader = Encoding.UTF8.GetString(fileBytes, 0, Math.Min(fileBytes.Length, 1));
-        return fileHeader == "{" || fileHeader == "[";
+        var startIndex = GetContentStartIndex(fileBytes);
+        if (startIndex >= fileBytes.Length)
+        {
+            return false;
+        }
+
+        if (fileBytes[startIndex] == 0x7B || fileBytes[startIndex] == 0x5B) // '{' ou '['
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public static bool IsGZip(byte[] fileBytes)

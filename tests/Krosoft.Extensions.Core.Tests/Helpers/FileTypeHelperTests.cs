@@ -151,6 +151,9 @@ public class FileTypeHelperTests
         var fileBytesXml = Assembly.GetExecutingAssembly().Read("xml.xml").ReadAsByteArray();
         Check.That(FileTypeHelper.IsXml(fileBytesXml)).IsTrue();
 
+        var fileBytesXmlBom = Assembly.GetExecutingAssembly().Read("XML_UTF8_BOM.xml").ReadAsByteArray();
+        Check.That(FileTypeHelper.IsXml(fileBytesXmlBom)).IsTrue();
+
         var fileBytesPdf = Assembly.GetExecutingAssembly().Read("sample1.pdf").ReadAsByteArray();
         Check.That(FileTypeHelper.IsXml(fileBytesPdf)).IsFalse();
 
@@ -213,6 +216,12 @@ public class FileTypeHelperTests
 
         var fileBytesEdi = Assembly.GetExecutingAssembly().Read("edi.edi").ReadAsByteArray();
         Check.That(FileTypeHelper.IsJson(fileBytesEdi)).IsFalse();
+
+        var fileBytesJson = Assembly.GetExecutingAssembly().Read("en.json").ReadAsByteArray();
+        Check.That(FileTypeHelper.IsJson(fileBytesJson)).IsTrue();
+
+        var fileBytesJsonBom = Assembly.GetExecutingAssembly().Read("json_ut8bom.json").ReadAsByteArray();
+        Check.That(FileTypeHelper.IsJson(fileBytesJsonBom)).IsTrue();
     }
 
     [TestMethod]

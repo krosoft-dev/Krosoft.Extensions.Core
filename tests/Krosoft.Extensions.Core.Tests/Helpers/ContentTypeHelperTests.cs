@@ -7,6 +7,42 @@ namespace Krosoft.Extensions.Core.Tests.Helpers;
 public class ContentTypeHelperTests
 {
     [TestMethod]
+    public void ContentTypeHelper_Pdf()
+    {
+        Check.That(ContentTypeHelper.GetContentType(".pdf")).IsEqualTo("application/pdf");
+    }
+
+    [TestMethod]
+    public void ContentTypeHelper_Json()
+    {
+        Check.That(ContentTypeHelper.GetContentType(".json")).IsEqualTo("application/json");
+    }
+
+    [TestMethod]
+    public void ContentTypeHelper_Zip()
+    {
+        Check.That(ContentTypeHelper.GetContentType(".zip")).IsEqualTo("application/zip");
+    }
+
+    [TestMethod]
+    public void ContentTypeHelper_Html()
+    {
+        Check.That(ContentTypeHelper.GetContentType(".html")).IsEqualTo("text/html");
+    }
+
+    [TestMethod]
+    public void ContentTypeHelper_TarGz()
+    {
+        Check.That(ContentTypeHelper.GetContentType(".tar.gz")).IsEqualTo("application/octet-stream");
+    }
+
+    [TestMethod]
+    public void ContentTypeHelper_Empty()
+    {
+        Check.That(ContentTypeHelper.GetContentType(string.Empty)).IsEqualTo("application/octet-stream");
+    }
+
+    [TestMethod]
     public void GetContentType_WithTxtExtension_ReturnsTextPlain()
     {
         var result = ContentTypeHelper.GetContentType(".txt");
