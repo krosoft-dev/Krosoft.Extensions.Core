@@ -1,5 +1,8 @@
 ﻿using Krosoft.Extensions.Core.Extensions;
+using Krosoft.Extensions.Core.Models;
+using Krosoft.Extensions.Core.Models.Exceptions;
 using Krosoft.Extensions.Samples.Library.Factories;
+using Krosoft.Extensions.Samples.Library.Models;
 
 namespace Krosoft.Extensions.Core.Tests.Extensions;
 
@@ -86,5 +89,99 @@ public class EnumerableExtensionsTests
 
         var adressesParCity = adresses.ToList().ToDictionary(x => x.Ville, x => x.ToUpper(), true);
         Check.That(adressesParCity).HasSize(5);
+    }
+
+    [TestMethod]
+    public void ToPagination_Null()
+    {
+        Check.ThatCode(() => AddresseFactory.GetAdresses()
+                                            .ToPagination(null!))
+             .Throws<KrosoftTechnicalException>()
+             .WithMessage("La variable 'paginationRequest' n'est pas renseignée.");
+    }
+
+    [TestMethod]
+    public void ToPagination_Ok()
+    {
+        var paginationRequest = new PaginationRequest
+        {
+            PageNumber = 1,
+            PageSize = 2
+        };
+        var adresses = AddresseFactory.GetAdresses().ToPagination(paginationRequest);
+        Check.That(adresses.PageNumber).IsEqualTo(1);
+        Check.That(adresses.PageSize).IsEqualTo(2);
+        Check.That(adresses.TotalCount).IsEqualTo(6);
+        Check.That(adresses.TotalPages).IsEqualTo(3);
+        Check.That(adresses.Items).HasSize(2);
+    }
+
+    [TestMethod]
+    public void Search_Empty()
+    {
+        var adresses = AddresseFactory.GetAdresses().Search("1");
+        Check.That(adresses).IsEmpty();
+    }
+
+    [TestMethod]
+    public void Search_Ok()
+    {
+        var adresses1 = AddresseFactory.GetAdresses().Search("1", x => x.CodePostal).ToList();
+        Check.That(adresses1).HasSize(1);
+        Check.That(adresses1.First().Ligne1).IsEqualTo("street1Line1");
+
+        var adresses2 = AddresseFactory.GetAdresses().Search("2", x => x.Ligne1, x => x.Ligne2).ToList();
+        Check.That(adresses2).HasSize(6);
+        Check.That(adresses2.Select(x => x.Ligne1))
+             .ContainsExactly("street3Line1", "street4Line1", "street5Line1", "street1Line1", "street2Line1", "street6Line1");
+    }
+
+    [TestMethod]
+    public void SortBy_Empty()
+    {
+        var paginationRequest = new PaginationRequest();
+        var adresses = AddresseFactory.GetAdresses().SortBy(paginationRequest).ToList();
+        Check.That(adresses).HasSize(6);
+        Check.That(adresses.Select(x => x.Ligne1))
+             .ContainsExactly("street3Line1", "street4Line1", "street5Line1", "street1Line1", "street2Line1", "street6Line1");
+    }
+
+    [TestMethod]
+    public void SortBy_Ok_Asc()
+    {
+        var paginationRequest = new PaginationRequest
+        {
+            SortBy = new HashSet<string> { $"{nameof(Addresse.Ligne1)}:asc" }
+        };
+        var adresses = AddresseFactory.GetAdresses().SortBy(paginationRequest).ToList();
+        Check.That(adresses).HasSize(6);
+        Check.That(adresses.Select(x => x.Ligne1))
+             .ContainsExactly("street1Line1", "street2Line1", "street3Line1", "street4Line1", "street5Line1", "street6Line1");
+    }
+
+    [TestMethod]
+    public void SortBy_Ok_Desc()
+    {
+        var paginationRequest = new PaginationRequest
+        {
+            SortBy = new HashSet<string> { $"{nameof(Addresse.Ligne1)}:desc" }
+        };
+        var adresses = AddresseFactory.GetAdresses().SortBy(paginationRequest).ToList();
+        Check.That(adresses).HasSize(6);
+        Check.That(adresses.Select(x => x.Ligne1))
+             .ContainsExactly("street6Line1", "street5Line1", "street4Line1", "street3Line1", "street2Line1", "street1Line1");
+    }
+
+    [TestMethod]
+    public void SortBy_NoDirection()
+    {
+        var paginationRequest = new PaginationRequest
+        {
+            SortBy = new HashSet<string> { $"{nameof(Addresse.Ligne1)}:aaaa" }
+        };
+        var adresses = AddresseFactory.GetAdresses().SortBy(paginationRequest).ToList();
+        Check.That(adresses).HasSize(6);
+        Check.That(adresses.Select(x => x.Ligne1))
+             .ContainsExactly("street6Line1", "street5Line1", "street4Line1", "street3Line1", "street2Line1", "street1Line1");
     }
 }

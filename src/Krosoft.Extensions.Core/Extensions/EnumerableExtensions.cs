@@ -1,9 +1,13 @@
-﻿using System.Collections;
+﻿using Krosoft.Extensions.Core.Helpers;
+using Krosoft.Extensions.Core.Tools;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 using System.Reflection;
-using Krosoft.Extensions.Core.Helpers;
-using Krosoft.Extensions.Core.Tools;
+using Krosoft.Extensions.Core.Models;
+using Krosoft.Extensions.Core.Models.Exceptions;
+using LinqKit;
 
 namespace Krosoft.Extensions.Core.Extensions;
 
@@ -315,5 +319,108 @@ public static class EnumerableExtensions
         }
 
         return enumerable.ToDictionary(keySelector, elementSelector);
+    }
+ 
+    private static readonly MethodInfo? ContainsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+    private static readonly MethodInfo? ToLowerMethod = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
+
+ 
+
+    public static PaginationResult<T> ToPagination<T>(this IEnumerable<T> items,
+                                                      ISearchPaginationRequest paginationRequest)
+    {
+        Guard.IsNotNull(nameof(items), items);
+        Guard.IsNotNull(nameof(paginationRequest), paginationRequest);
+
+        var list = items.ToList();
+
+        var pagined = list.SortBy(paginationRequest)
+                          .Skip((paginationRequest.PageNumber - 1) * paginationRequest.PageSize)
+                          .Take(paginationRequest.PageSize);
+
+        return new PaginationResult<T>(pagined, list.Count, paginationRequest.PageNumber, paginationRequest.PageSize);
+    }
+
+ 
+
+    public static IEnumerable<T> Search<T>(this IEnumerable<T> query,
+                                           string? searchTerm,
+                                           params Expression<Func<T, string?>>[] selectors)
+    {
+        if (ToLowerMethod == null)
+        {
+            throw new KrosoftTechnicalException("Method 'ToLower' is not defined.");
+        }
+
+        if (ContainsMethod == null)
+        {
+            throw new KrosoftTechnicalException("Method 'Contains' is not defined.");
+        }
+
+        if (string.IsNullOrEmpty(searchTerm))
+        {
+            return query;
+        }
+
+        var searchTermLower = searchTerm.ToLower();
+        var predicate = PredicateBuilder.New<T>();
+
+        foreach (var selector in selectors)
+        {
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var selectorInvocation = Expression.Invoke(selector, parameter);
+
+            var nullCheck = Expression.NotEqual(selectorInvocation, Expression.Constant(null, typeof(string)));
+            var toLower = Expression.Call(selectorInvocation, ToLowerMethod);
+            var contains = Expression.Call(toLower, ContainsMethod, Expression.Constant(searchTermLower));
+
+            var condition = Expression.Condition(nullCheck, contains, Expression.Constant(false));
+            var lambda = Expression.Lambda<Func<T, bool>>(condition, parameter);
+
+            predicate = predicate.Or(lambda);
+        }
+
+        return query.Where(predicate);
+    }
+
+    public static IEnumerable<T> SortBy<T>(this IEnumerable<T> query,
+                                           IPaginationRequest request)
+    {
+        if (request.SortBy == null || !request.SortBy.Any())
+        {
+            return query;
+        }
+
+        IOrderedEnumerable<T>? orderedQuery = null;
+
+        foreach (var sortOption in request.SortBy)
+        {
+            var parts = sortOption.Split(':');
+            if (parts.Length == 2)
+            {
+                var key = parts[0];
+                var order = parts[1].ToLower();
+                var prop = typeof(T).GetProperty(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                if (prop is null)
+                {
+                    throw new KrosoftTechnicalException($"Impossible de déterminer la colonne à partir de la clé suivante : {key}");
+                }
+
+                if (orderedQuery == null)
+                {
+                    orderedQuery = order == "asc"
+                        ? query.OrderBy(x => prop.GetValue(x))
+                        : query.OrderByDescending(x => prop.GetValue(x));
+                }
+                else
+                {
+                    orderedQuery = order == "asc"
+                        ? orderedQuery.ThenBy(x => prop.GetValue(x))
+                        : orderedQuery.ThenByDescending(x => prop.GetValue(x));
+                }
+            }
+        }
+
+        return orderedQuery ?? query;
     }
 }
