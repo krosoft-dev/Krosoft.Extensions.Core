@@ -6,7 +6,7 @@ namespace Krosoft.Extensions.Core.Tests.Helpers;
 [TestClass]
 public class StringHelperTests : BaseTest
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("test", "01/01/0001")]
     [DataRow(null!, "01/01/0001")]
     [DataRow("", "01/01/0001")]
@@ -18,7 +18,7 @@ public class StringHelperTests : BaseTest
         Check.That(formatDate).IsEqualTo(expected);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Hello, World!", "Hello, World!")]
     [DataRow("", "")]
     [DataRow(null, null)]
@@ -38,7 +38,7 @@ public class StringHelperTests : BaseTest
         }
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, "")]
     [DataRow("", "")]
     [DataRow("T", "T")]
@@ -63,7 +63,7 @@ public class StringHelperTests : BaseTest
         Check.That(formatDate).IsEqualTo(expected);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, null)]
     [DataRow("", "")]
     [DataRow("abc123def456", "123456")]
@@ -76,7 +76,7 @@ public class StringHelperTests : BaseTest
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(5)]
     [DataRow(10)]
     [DataRow(15)]
@@ -88,7 +88,7 @@ public class StringHelperTests : BaseTest
         Check.That(result.All(char.IsLetterOrDigit)).IsTrue();
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, 0)]
     [DataRow("", 0)]
     [DataRow("160519", 160519)]
@@ -105,7 +105,7 @@ public class StringHelperTests : BaseTest
         Check.That(formatDate).IsEqualTo(expected);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, "")]
     [DataRow("", "")]
     [DataRow("   test   ", "test")]
@@ -117,7 +117,7 @@ public class StringHelperTests : BaseTest
         Check.That(formatDate).IsEqualTo(expected);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, 10, null)]
     [DataRow("", 10, "")]
     [DataRow("Short text", 20, "Short text")]

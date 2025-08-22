@@ -5,7 +5,7 @@ namespace Krosoft.Extensions.Core.Tests.Extensions;
 [TestClass]
 public class IntegerExtensionsTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(5, 1, 10, true, true)]
     [DataRow(1, 1, 10, true, true)]
     [DataRow(10, 1, 10, true, true)]
@@ -18,7 +18,7 @@ public class IntegerExtensionsTests
         Check.That(result).IsEqualTo(expectedResult);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(5, "00000000-0000-0000-0000-000000000005")]
     [DataRow(123456789, "00000000-0000-0000-0000-000123456789")]
     [DataRow(999999999999, "00000000-0000-0000-0000-999999999999")]

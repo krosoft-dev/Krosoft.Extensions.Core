@@ -90,7 +90,7 @@ public class ContentTypeHelperTests
         Check.That(result).IsEqualTo("application/pdf");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(".txt", "text/plain")]
     [DataRow(".pdf", "application/pdf")]
     [DataRow(".doc", "application/msword")]

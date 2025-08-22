@@ -5,7 +5,7 @@ namespace Krosoft.Extensions.Core.Tests.Helpers;
 [TestClass]
 public class NumberHelperTest
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("123.45", 123.45)]
     [DataRow("-789.12", -789.12)]
     [DataRow("42", 42)]
@@ -18,7 +18,7 @@ public class NumberHelperTest
         Check.That(result).IsEqualTo((decimal)expectedResult);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("123", 123)]
     [DataRow("-789", 789)]
     [DataRow("42", 42)]

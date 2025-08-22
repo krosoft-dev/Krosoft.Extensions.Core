@@ -5,7 +5,7 @@ namespace Krosoft.Extensions.Core.Tests.Extensions;
 [TestClass]
 public class StringExtensionsTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("word", "word")] // Aucun changement attendu
     [DataRow("ThisIsAString", "This Is A String")] // Ajout d'espaces avant les majuscules
     [DataRow("CapitalStart", "Capital Start")] // Ajout d'espace après la première majuscule
@@ -21,7 +21,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expected);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("", 5, "")]
     [DataRow(null, 5, null)] 
     [DataRow("abcdefgh", 3, "abc")]
@@ -35,7 +35,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, null, false)]
     [DataRow(null, "aaa", false)]
     [DataRow("aaa", null, false)]
@@ -56,7 +56,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, null)]
     [DataRow("", "")]
     [DataRow("abc 123", "abc123")]
@@ -75,7 +75,7 @@ public class StringExtensionsTests
         Check.That("Rez-de-chaussée".RemoveDiacritics()).IsEqualTo("Rez-de-chaussee");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, "", null)]
     [DataRow("", "", "")]
     [DataRow("test", null, "test")]
@@ -93,7 +93,7 @@ public class StringExtensionsTests
         Check.That(input.RemovePrefix(prefix)).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, null)]
     [DataRow("", "")]
     [DataRow("text", "text")]
@@ -109,7 +109,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, null)]
     [DataRow("", "")]
     [DataRow("http://example.com/", "http://example.com")]
@@ -126,7 +126,7 @@ public class StringExtensionsTests
         Check.That(input).IsEqualTo("this is a test");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, "find", "replace", null)]
     [DataRow("", "find", "replace", "")]
     [DataRow("find and replace", "find", "new", "new and replace")]
@@ -139,7 +139,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, "find", "replace", null)]
     [DataRow("", "find", "replace", "")]
     [DataRow("find and replace", "find", "new", "new and replace")]
@@ -152,7 +152,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, 5, null)]
     [DataRow("", 5, "")]
     [DataRow("abcdefgh", 3, "fgh")]
@@ -166,7 +166,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("asdf.txt", null, "asdf.txt")]
     [DataRow("\"<>|:*?\\/.txt", null, "_________.txt")]
     [DataRow("yes_its_valid_~!@#$%^&()_+.txt", null, "yes_its_valid__.txt")]
@@ -178,7 +178,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, ' ', new string[] { })]
     [DataRow("", ' ', new string[] { })]
     [DataRow("   ", ' ', new string[] { })]
@@ -192,7 +192,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, null)]
     [DataRow("", "")]
     [DataRow("abc123", "abc123")]
@@ -206,7 +206,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, 0)]
     [DataRow("", 0)]
     [DataRow("123", 123)]
@@ -220,7 +220,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, null)]
     [DataRow("", "")]
     [DataRow("abc", "Abc")]
@@ -234,7 +234,7 @@ public class StringExtensionsTests
         Check.That(result).IsEqualTo(expectedOutput);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, 10, null)]
     [DataRow("", 10, "")]
     [DataRow("abcdefghij", 5, "abcde")]

@@ -31,7 +31,7 @@ public class NullableIntegerConverterTests
         Check.That(obj).IsNotNull();
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("           ", null)]
     [DataRow("null", null)]
     [DataRow("999", 999)]

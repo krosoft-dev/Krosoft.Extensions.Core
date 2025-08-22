@@ -43,7 +43,7 @@ public class BooleanConverterTests
              .WithMessage("Error converting value \"test\" to type 'System.Boolean'. Path 'IsActif', line 2, position 29.");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("faux", false)]
     [DataRow("false", false)]
     [DataRow("no", false)]

@@ -6,7 +6,7 @@ namespace Krosoft.Extensions.Core.Tests.Extensions;
 [TestClass]
 public class EnumExtensionsTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SampleCode.One, "Description for Value1")]
     [DataRow(SampleCode.Two, "Description for Value2")]
     [DataRow(SampleCode.Three, "Description for Value3")]
@@ -19,7 +19,7 @@ public class EnumExtensionsTests
         Check.That(result).IsEqualTo(expectedDescription);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SampleCode.One, "Display Name for Value1")]
     [DataRow(SampleCode.Two, "Display Name for Value2")]
     [DataRow(SampleCode.Three, "Display Name for Value3")]

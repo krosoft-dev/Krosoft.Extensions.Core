@@ -35,7 +35,7 @@ public class NullableDecimalConverterTests
         Check.That(obj).IsNotNull();
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("           ", null, CultureFr)]
     [DataRow("null", null, CultureFr)]
     [DataRow("999,45462", 999.45462, CultureFr)] 

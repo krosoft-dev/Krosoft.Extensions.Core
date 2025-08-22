@@ -5,7 +5,7 @@ namespace Krosoft.Extensions.Core.Tests.Helpers;
 [TestClass]
 public class Base64HelperTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("SGVsbG8sIFdvcmxkIQ==", "Hello, World!")]
     [DataRow("", "")]
     [DataRow(null, null)]
@@ -16,7 +16,7 @@ public class Base64HelperTests
         Check.That(result).IsEqualTo(expectedPlainText);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("and0VG9rZW4=", true)]
     [DataRow("aaa", false)]
     [DataRow("", false)]
@@ -28,7 +28,7 @@ public class Base64HelperTests
         Check.That(result).IsEqualTo(expected);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("jwtToken", "and0VG9rZW4=")]
     [DataRow("", "")]
     [DataRow(null, null)]
