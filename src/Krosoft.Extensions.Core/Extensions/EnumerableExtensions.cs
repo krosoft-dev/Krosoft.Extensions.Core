@@ -1,12 +1,12 @@
-﻿using Krosoft.Extensions.Core.Helpers;
-using Krosoft.Extensions.Core.Tools;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Reflection;
+using Krosoft.Extensions.Core.Helpers;
 using Krosoft.Extensions.Core.Models;
 using Krosoft.Extensions.Core.Models.Exceptions;
+using Krosoft.Extensions.Core.Tools;
 using LinqKit;
 
 namespace Krosoft.Extensions.Core.Extensions;
@@ -320,11 +320,9 @@ public static class EnumerableExtensions
 
         return enumerable.ToDictionary(keySelector, elementSelector);
     }
- 
+
     private static readonly MethodInfo? ContainsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
     private static readonly MethodInfo? ToLowerMethod = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
-
- 
 
     public static PaginationResult<T> ToPagination<T>(this IEnumerable<T> items,
                                                       ISearchPaginationRequest paginationRequest)
@@ -340,8 +338,6 @@ public static class EnumerableExtensions
 
         return new PaginationResult<T>(pagined, list.Count, paginationRequest.PageNumber, paginationRequest.PageSize);
     }
-
- 
 
     public static IEnumerable<T> Search<T>(this IEnumerable<T> query,
                                            string? searchTerm,
