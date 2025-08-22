@@ -117,7 +117,7 @@ public class EnumerableExtensionsTests
     }
 
     [TestMethod]
-    public void Search_Empty()
+    public void Search_NoSelector()
     {
         var adresses = AddresseFactory.GetAdresses().Search("1");
         Check.That(adresses).IsEmpty();
@@ -137,6 +137,16 @@ public class EnumerableExtensionsTests
     }
 
     [TestMethod]
+    public void Search_Empty()
+    {
+        var adresses = AddresseFactory.GetAdresses().Search(null, x => x.CodePostal).ToList();
+
+        Check.That(adresses).HasSize(6);
+        Check.That(adresses.Select(x => x.Ligne1))
+             .ContainsExactly("street3Line1", "street4Line1", "street5Line1", "street1Line1", "street2Line1", "street6Line1");
+    }
+
+    [TestMethod]
     public void SortBy_Empty()
     {
         var paginationRequest = new PaginationRequest();
@@ -147,11 +157,24 @@ public class EnumerableExtensionsTests
     }
 
     [TestMethod]
+    public void SortBy_WrongKey()
+    {
+        var paginationRequest = new PaginationRequest
+        {
+            SortBy = new HashSet<string> { "aaa:asc" }
+        };
+
+        Check.ThatCode(() => AddresseFactory.GetAdresses().SortBy(paginationRequest))
+             .Throws<KrosoftTechnicalException>()
+             .WithMessage("Impossible de déterminer la colonne à partir de la clé suivante : aaa");
+    }
+
+    [TestMethod]
     public void SortBy_Ok_Asc()
     {
         var paginationRequest = new PaginationRequest
         {
-            SortBy = new HashSet<string> { $"{nameof(Addresse.Ligne1)}:asc" }
+            SortBy = new HashSet<string> { $"{nameof(Addresse.Ligne1)}:asc", $"{nameof(Addresse.Ligne2)}:asc" }
         };
         var adresses = AddresseFactory.GetAdresses().SortBy(paginationRequest).ToList();
         Check.That(adresses).HasSize(6);
