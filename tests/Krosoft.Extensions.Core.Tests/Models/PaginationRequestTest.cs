@@ -13,8 +13,8 @@ public class PaginationRequestTest
         var paginationRequest = new PaginationRequest();
 
         Check.That(paginationRequest).IsNotNull();
-        Check.That(paginationRequest.PageNumber).IsEqualTo(0);
-        Check.That(paginationRequest.PageSize).IsEqualTo(0);
+        Check.That(paginationRequest.PageNumber).IsEqualTo(1);
+        Check.That(paginationRequest.PageSize).IsEqualTo(10);
         Check.That(paginationRequest.SortBy).IsNotNull();
         Check.That(paginationRequest.SortBy).IsEmpty();
         Check.That(paginationRequest.Text).IsNull();
