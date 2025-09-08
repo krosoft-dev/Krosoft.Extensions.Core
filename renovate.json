@@ -1,4 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>krosoft-dev/Krosoft.Configs.Renovate:dotnet"]
+  "extends": ["github>krosoft-dev/Krosoft.Configs.Renovate:dotnet"],
+  "assignees": ["krosoft-dev"]
 }
