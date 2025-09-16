@@ -18,6 +18,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="LinqKit.Core" Version="1.2.8" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 	</ItemGroup>
 </Project>
