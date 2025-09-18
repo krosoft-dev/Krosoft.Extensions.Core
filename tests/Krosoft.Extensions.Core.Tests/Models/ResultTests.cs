@@ -129,6 +129,7 @@ public class ResultTests
 
         Check.That(bound.IsFaulted).IsTrue();
         Check.That(bound.Exception).IsSameReferenceAs(exception);
+        Check.That(bound.Value).IsNull();
     }
 
     [TestMethod]
@@ -214,14 +215,19 @@ public class ResultTests
     [TestMethod]
     public void ToFailureResult_ShouldWorkWithBind()
     {
-        var exception = new InvalidOperationException("fail");
-
-        var result = exception.ToFailureResult<string>()
-                              .Bind(val => Result<int>.Success(val.Length));
-
-        Check.That(result).IsInstanceOf<Result<int>>();
+        var ex = new InvalidOperationException("fail");
+        var result = ex.ToFailureResult<string>();
+        Check.That(result).IsInstanceOf<Result<string>>();
         Check.That(result.IsFaulted).IsTrue();
-        Check.That(result.Exception).IsSameReferenceAs(exception);
+        Check.That(result.Value).IsNull();
+        Check.That(result.Exception).IsSameReferenceAs(ex);
+
+        var binded = result.Bind(val => Result<int>.Success(val.Length));
+
+        Check.That(binded).IsInstanceOf<Result<int>>();
+        Check.That(binded.IsFaulted).IsTrue();
+        Check.That(binded.Value).IsDefaultValue();
+        Check.That(binded.Exception).IsSameReferenceAs(ex);
     }
 
     [TestMethod]
@@ -248,5 +254,73 @@ public class ResultTests
         Check.That(result).IsInstanceOf<Result<string>>();
         Check.That(result.IsFaulted).IsTrue();
         Check.That(result.Exception).IsSameReferenceAs(exception);
+    }
+
+    [TestMethod]
+    public void Bind_Should_Return_Success_Result()
+    {
+        var result = Result<int>.Success(10);
+
+        var switched = result.Map(
+                                  num => $"Number is {num}",
+                                  _ => new InvalidOperationException("Should not reach here"));
+
+        Check.That(switched.IsSuccess).IsTrue();
+        Check.That(switched.Value).IsEqualTo("Number is 10");
+    }
+
+    [TestMethod]
+    public void Bind_Should_Transform_Exception_When_Failure()
+    {
+        var exception = new Exception("Original error");
+        var result = Result<int>.Failure(exception);
+
+        var switched = result.Map(
+                                  num => $"Number is {num}",
+                                  _ => new InvalidOperationException("Transformed error"));
+
+        Check.That(switched.IsFaulted).IsTrue();
+        Check.That(switched.Exception).IsInstanceOf<InvalidOperationException>();
+        Check.That(switched.Exception!.Message).IsEqualTo("Transformed error");
+    }
+
+    [TestMethod]
+    public void Bind_Should_Not_Call_OnFailure_When_Success()
+    {
+        var result = Result<int>.Success(42);
+
+        var switched = result.Map(
+                                  num => $"Value is {num}",
+                                  _ => new InvalidOperationException("This should not be called"));
+
+        Check.That(switched.IsSuccess).IsTrue();
+        Check.That(switched.Value).IsEqualTo("Value is 42");
+    }
+
+    [TestMethod]
+    public void Bind_Should_Not_Call_OnSuccess_When_Failure()
+    {
+        var exception = new Exception("Test exception");
+        var result = Result<int>.Failure(exception);
+
+        var switched = result.Bind<int>(_ => throw new Exception("This should not be called"),
+                                        _ => new InvalidOperationException("Handled failure"));
+
+        Check.That(switched.IsFaulted).IsTrue();
+        Check.That(switched.Exception).IsInstanceOf<InvalidOperationException>();
+        Check.That(switched.Exception!.Message).IsEqualTo("Handled failure");
+    }
+
+    [TestMethod]
+    public void Bind_Should_Not_Call_OnSuccess_When_Failure_Is_Returned()
+    {
+        var exception = new KrosoftTechnicalException("Test exception");
+        var result = Result<int>.Failure(exception);
+
+        var switched = result.Bind<int>(_ => throw new Exception("This should not be called"));
+
+        Check.That(switched.IsFaulted).IsTrue();
+        Check.That(switched.Exception).IsInstanceOf<KrosoftTechnicalException>();
+        Check.That(switched.Exception!.Message).IsEqualTo("Test exception");
     }
 }
