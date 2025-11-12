@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Krosoft.Extensions.Core.Extensions;
 using Krosoft.Extensions.Core.Helpers;
 using Krosoft.Extensions.Core.Models.Exceptions;
 
@@ -128,7 +129,7 @@ public class FileHelperTests
                                       .ToArray();
         await File.WriteAllLinesAsync(filePath, expectedLines, Encoding.UTF8);
 
-        var result = await FileHelper.ReadAsStringArrayAsync(filePath, Encoding.UTF8);
+        var result = await FileHelper.ReadAsStringArrayAsync(filePath, Encoding.UTF8)!.ToList();
 
         Check.That(result).HasSize(10000);
         Check.That(result).ContainsExactly(expectedLines);
