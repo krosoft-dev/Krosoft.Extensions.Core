@@ -29,21 +29,18 @@ public readonly struct Result<T>
         return Value!;
     }
 
-    
-
     public bool IsSuccess => Exception == null;
     public bool IsFaulted => !IsSuccess;
 
-    public static Result<T> Success(T value) => new Result<T>(value);
+    public static Result<T> Success(T value) => new(value);
 
-    public static Result<T> Failure(Exception e) => new Result<T>(e);
+    public static Result<T> Failure(Exception e) => new(e);
 
     public Result<TU> Map<TU>(Func<T, TU> transform) =>
         IsSuccess
             ? Result<TU>.Success(transform(Value!))
-            : Result<TU>.Failure(Exception!); 
-    
-    
+            : Result<TU>.Failure(Exception!);
+
     public Result<TU> Map<TU>(Func<T, TU> onSuccess,
                               Func<Exception, Exception> onFailure) =>
         IsSuccess
@@ -54,12 +51,10 @@ public readonly struct Result<T>
         IsSuccess
             ? transform(Value!)
             : Result<TU>.Failure(Exception!);
+
     public Result<TU> Bind<TU>(Func<T, Result<TU>> onSuccess,
                                Func<Exception, Exception> onFailure) =>
         IsSuccess
             ? onSuccess(Value!)
             : Result<TU>.Failure(onFailure(Exception!));
-
-
-    
 }
