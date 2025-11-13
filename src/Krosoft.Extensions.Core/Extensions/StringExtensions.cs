@@ -363,10 +363,10 @@ public static class StringExtensions
         text = text.ToLowerInvariant();
         text = RemoveDiacritics(text);
         text = Regex.Replace(text!, @"[^a-z0-9\s-]", "", RegexOptions.None, RegexHelper.MatchTimeout);
-        text = Regex.Replace(text, @"\s+", " ").Trim();
+        text = Regex.Replace(text, @"\s+", " ", RegexOptions.None, RegexHelper.MatchTimeout).Trim();
         text = text.Truncate(maxLength);
-        text = Regex.Replace(text!, @"\s", "-");
-        text = Regex.Replace(text, @"-+", "-");
+        text = Regex.Replace(text!, @"\s", "-", RegexOptions.None, RegexHelper.MatchTimeout);
+        text = Regex.Replace(text, "-+", "-", RegexOptions.None, RegexHelper.MatchTimeout);
 
         return text.Trim('-');
     }
