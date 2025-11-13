@@ -10,9 +10,9 @@ namespace Krosoft.Extensions.Core.Extensions;
 /// </summary>
 public static class StringExtensions
 {
-    private static readonly Regex RemoveInvalidChars = new Regex($"[{Regex.Escape(new string(GetInvalidFileNameChars()))}]",
-                                                                 RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.CultureInvariant
-                                                                 , RegexHelper.MatchTimeout);
+    private static readonly Regex RemoveInvalidChars = new($"[{Regex.Escape(new string(GetInvalidFileNameChars()))}]",
+                                                           RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.CultureInvariant
+                                                           , RegexHelper.MatchTimeout);
 
     /// <summary>
     /// Insère des espaces avant chaque lettre majuscule dans une chaîne de caractères.
@@ -353,52 +353,21 @@ public static class StringExtensions
         return source.Substring(0, length);
     }
 
-
-
-
-
-
-
-
-
-     
-        public static string ToSlug(this string text, int maxLength = 50)
+    public static string ToSlug(this string? text, int maxLength = 50)
+    {
+        if (string.IsNullOrWhiteSpace(text))
         {
-            if (string.IsNullOrWhiteSpace(text))
-                return string.Empty;
-
-            text = text.ToLowerInvariant();
-            text = RemoveAccents(text);
-            text = Regex.Replace(text, @"[^a-z0-9\s-]", "");
-            text = Regex.Replace(text, @"\s+", " ").Trim();
-
-            if (text.Length > maxLength)
-            {
-                text = text.Substring(0, maxLength).Trim();
-            }
-
-            text = Regex.Replace(text, @"\s", "-");
-            text = Regex.Replace(text, @"-+", "-");
-
-            return text.Trim('-');
+            return string.Empty;
         }
 
-        private static string RemoveAccents(string text)
-        {
-            var normalizedString = text.Normalize(NormalizationForm.FormD);
-            var stringBuilder = new StringBuilder();
+        text = text.ToLowerInvariant();
+        text = RemoveDiacritics(text);
+        text = Regex.Replace(text!, @"[^a-z0-9\s-]", "", RegexOptions.None, RegexHelper.MatchTimeout);
+        text = Regex.Replace(text, @"\s+", " ").Trim();
+        text = text.Truncate(maxLength);
+        text = Regex.Replace(text!, @"\s", "-");
+        text = Regex.Replace(text, @"-+", "-");
 
-            foreach (var c in normalizedString)
-            {
-                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                {
-                    stringBuilder.Append(c);
-                }
-            }
-
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
-        }
+        return text.Trim('-');
     }
-
- 
+}

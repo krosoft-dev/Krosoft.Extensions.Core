@@ -23,7 +23,7 @@ public class StringExtensionsTests
 
     [TestMethod]
     [DataRow("", 5, "")]
-    [DataRow(null, 5, null)] 
+    [DataRow(null, 5, null)]
     [DataRow("abcdefgh", 3, "abc")]
     [DataRow("xyz", 10, "xyz")]
     [DataRow("12345", 0, "")]
@@ -246,147 +246,115 @@ public class StringExtensionsTests
         var result = input.Truncate(maxLength);
         Check.That(result).IsEqualTo(expectedOutput);
     }
- 
+
     [TestMethod]
     public void ToSlug_WithSimpleText_ReturnsLowercaseSlug()
     {
-        // Arrange
         var input = "Hello World";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("hello-world");
     }
 
     [TestMethod]
     public void ToSlug_WithAccentedCharacters_RemovesAccents()
     {
-        // Arrange
         var input = "Café résumé naïve";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("cafe-resume-naive");
     }
 
     [TestMethod]
     public void ToSlug_WithSpecialCharacters_RemovesSpecialChars()
     {
-        // Arrange
         var input = "Hello@World! #Test $2024";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("helloworld-test-2024");
     }
 
     [TestMethod]
     public void ToSlug_WithMultipleSpaces_ReplacesWithSingleDash()
     {
-        // Arrange
         var input = "Hello    World     Test";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("hello-world-test");
     }
 
     [TestMethod]
     public void ToSlug_WithMultipleDashes_ConsolidatesToSingleDash()
     {
-        // Arrange
         var input = "Hello---World--Test";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("hello-world-test");
     }
 
     [TestMethod]
     public void ToSlug_WithLeadingAndTrailingSpaces_TrimsSpaces()
     {
-        // Arrange
         var input = "   Hello World   ";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("hello-world");
     }
 
     [TestMethod]
     public void ToSlug_WithLeadingAndTrailingDashes_TrimsDashes()
     {
-        // Arrange
         var input = "---Hello World---";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("hello-world");
     }
 
     [TestMethod]
     public void ToSlug_WithMixedCase_ConvertsToLowercase()
     {
-        // Arrange
         var input = "HeLLo WoRLd TeST";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("hello-world-test");
     }
 
     [TestMethod]
     public void ToSlug_WithNumbers_PreservesNumbers()
     {
-        // Arrange
         var input = "Article 123 Version 2024";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("article-123-version-2024");
     }
 
     [TestMethod]
     public void ToSlug_WithExistingDashes_PreservesDashes()
     {
-        // Arrange
         var input = "Hello-World-Test";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("hello-world-test");
     }
 
     [TestMethod]
     public void ToSlug_WithTextExceedingMaxLength_TruncatesToMaxLength()
     {
-      
         var input = "This is a very long text that exceeds the maximum length";
         var maxLength = 25; // Ajusté pour tomber sur un mot complet
 
-      
-        var result = StringExtensions.ToSlug(input, maxLength);
- 
+        var result = input.ToSlug(maxLength);
+
         Check.That(result.Length).IsLessOrEqualThan(maxLength);
         Check.That(result).IsEqualTo("this-is-a-very-long-text");
     }
@@ -394,27 +362,21 @@ public class StringExtensionsTests
     [TestMethod]
     public void ToSlug_WithTextExceedingDefaultMaxLength_TruncatesTo50Characters()
     {
-        // Arrange
         var input = "This is a very long text that definitely exceeds the default maximum length of fifty characters";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
-        Check.That(result).IsEqualTo("this-is-a-very-long-text-that-definitely-exceeds-t"); 
+        Check.That(result).IsEqualTo("this-is-a-very-long-text-that-definitely-exceeds-t");
     }
 
     [TestMethod]
     public void ToSlug_WithTruncationEndingWithSpace_TrimsTrailingSpace()
     {
-        // Arrange
         var input = "Hello World This Is A Test";
         var maxLength = 12; // Coupe après "Hello World "
 
-        // Act
-        var result = StringExtensions.ToSlug(input, maxLength);
+        var result = input.ToSlug(maxLength);
 
-        // Assert
         Check.That(result).Not.EndsWith("-");
         Check.That(result).IsEqualTo("hello-world");
     }
@@ -422,130 +384,100 @@ public class StringExtensionsTests
     [TestMethod]
     public void ToSlug_WithFrenchAccents_RemovesAllAccents()
     {
-        // Arrange
         var input = "À È Ì Ò Ù Â Ê Î Ô Û Ä Ë Ï Ö Ü Ç";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("a-e-i-o-u-a-e-i-o-u-a-e-i-o-u-c");
     }
 
     [TestMethod]
     public void ToSlug_WithEmojisAndSymbols_RemovesEmojisAndSymbols()
     {
-        // Arrange
         var input = "Hello 🎉 World ★ Test ♥";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("hello-world-test");
     }
 
     [TestMethod]
     public void ToSlug_WithUnderscores_RemovesUnderscores()
     {
-        // Arrange
         var input = "Hello_World_Test";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("helloworldtest");
     }
 
     [TestMethod]
     public void ToSlug_WithDots_RemovesDots()
     {
-        // Arrange
         var input = "Hello.World.Test";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("helloworldtest");
     }
 
     [TestMethod]
     public void ToSlug_WithAmpersand_RemovesAmpersand()
     {
-        // Arrange
         var input = "Hello & World";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("hello-world");
     }
 
     [TestMethod]
     public void ToSlug_WithNullString_ReturnsEmptyString()
     {
-        // Arrange
         string? input = null;
 
-        // Act
-        var result = StringExtensions.ToSlug(input!);
+        var result = input!.ToSlug();
 
-        // Assert
         Check.That(result).IsEmpty();
     }
 
     [TestMethod]
     public void ToSlug_WithEmptyString_ReturnsEmptyString()
     {
-        // Arrange
         var input = string.Empty;
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEmpty();
     }
 
     [TestMethod]
     public void ToSlug_WithWhitespaceOnly_ReturnsEmptyString()
     {
-        // Arrange
         var input = "     ";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEmpty();
     }
 
     [TestMethod]
     public void ToSlug_WithOnlySpecialCharacters_ReturnsEmptyString()
     {
-        // Arrange
         var input = "@#$%^&*()";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEmpty();
     }
 
     [TestMethod]
     public void ToSlug_WithRealWorldExample_GeneratesValidSlug()
     {
-        // Arrange
         var input = "Les 10 meilleures pratiques pour développer en C# (2024)";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).HasSize(50); // Vérifie la troncature par défaut
         Check.That(result).IsEqualTo("les-10-meilleures-pratiques-pour-developper-en-c-2");
     }
@@ -553,40 +485,31 @@ public class StringExtensionsTests
     [TestMethod]
     public void ToSlug_WithRealWorldExample_GeneratesValidSlugg()
     {
-        // Arrange
         var input = "Les 10 meilleures pratiques pour développer en C# (2024)";
 
-        // Act
-        var result = StringExtensions.ToSlug(input, 100); // Pas de troncature
+        var result = input.ToSlug(100); // Pas de troncature
 
-        // Assert
         Check.That(result).IsEqualTo("les-10-meilleures-pratiques-pour-developper-en-c-2024");
     }
 
     [TestMethod]
     public void ToSlug_WithURLLikeText_GeneratesCleanSlug()
     {
-        // Arrange
         var input = "https://example.com/article-test";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("httpsexamplecomarticle-test");
     }
 
     [TestMethod]
     public void ToSlug_WithCustomMaxLength_RespectsCustomLength()
     {
-        // Arrange
         var input = "This is a test text";
         var maxLength = 10;
 
-        // Act
-        var result = StringExtensions.ToSlug(input, maxLength);
+        var result = input.ToSlug(maxLength);
 
-        // Assert
         Check.That(result.Length).IsLessOrEqualThan(maxLength);
         Check.That(result).IsEqualTo("this-is-a");
     }
@@ -594,81 +517,62 @@ public class StringExtensionsTests
     [TestMethod]
     public void ToSlug_WithMaxLengthZero_ReturnsEmptyString()
     {
-        // Arrange
         var input = "Hello World";
         var maxLength = 0;
 
-        // Act
-        var result = StringExtensions.ToSlug(input, maxLength);
+        var result = input.ToSlug(maxLength);
 
-        // Assert
         Check.That(result).IsEmpty();
     }
 
     [TestMethod]
     public void ToSlug_WithMaxLengthOne_ReturnsOneCharacter()
     {
-        // Arrange
         var input = "Hello World";
         var maxLength = 1;
 
-        // Act
-        var result = StringExtensions.ToSlug(input, maxLength);
+        var result = input.ToSlug(maxLength);
 
-        // Assert
         Check.That(result).IsEqualTo("h");
     }
 
     [TestMethod]
     public void ToSlug_WithSpanishAccents_RemovesSpanishAccents()
     {
-        // Arrange
         var input = "Español ñ á é í ó ú";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("espanol-n-a-e-i-o-u");
     }
 
     [TestMethod]
     public void ToSlug_WithGermanCharacters_RemovesGermanCharacters()
     {
-        // Arrange
         var input = "Österreich Über ß";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("osterreich-uber");
     }
 
     [TestMethod]
     public void ToSlug_WithConsecutiveSpacesAndDashes_ConsolidatesCorrectly()
     {
-        // Arrange
         var input = "Hello  --  World  --  Test";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("hello-world-test");
     }
 
     [TestMethod]
     public void ToSlug_WithTabsAndNewlines_ReplacesWithDashes()
     {
-        // Arrange
         var input = "Hello\tWorld\nTest\rEnd";
 
-        // Act
-        var result = StringExtensions.ToSlug(input);
+        var result = input.ToSlug();
 
-        // Assert
         Check.That(result).IsEqualTo("hello-world-test-end");
     }
 }
-
