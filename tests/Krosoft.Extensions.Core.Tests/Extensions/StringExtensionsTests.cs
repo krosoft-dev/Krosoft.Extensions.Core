@@ -23,7 +23,7 @@ public class StringExtensionsTests
 
     [TestMethod]
     [DataRow("", 5, "")]
-    [DataRow(null, 5, null)] 
+    [DataRow(null, 5, null)]
     [DataRow("abcdefgh", 3, "abc")]
     [DataRow("xyz", 10, "xyz")]
     [DataRow("12345", 0, "")]
@@ -246,5 +246,333 @@ public class StringExtensionsTests
         var result = input.Truncate(maxLength);
         Check.That(result).IsEqualTo(expectedOutput);
     }
-}
 
+    [TestMethod]
+    public void ToSlug_WithSimpleText_ReturnsLowercaseSlug()
+    {
+        var input = "Hello World";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("hello-world");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithAccentedCharacters_RemovesAccents()
+    {
+        var input = "Café résumé naïve";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("cafe-resume-naive");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithSpecialCharacters_RemovesSpecialChars()
+    {
+        var input = "Hello@World! #Test $2024";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("helloworld-test-2024");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithMultipleSpaces_ReplacesWithSingleDash()
+    {
+        var input = "Hello    World     Test";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("hello-world-test");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithMultipleDashes_ConsolidatesToSingleDash()
+    {
+        var input = "Hello---World--Test";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("hello-world-test");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithLeadingAndTrailingSpaces_TrimsSpaces()
+    {
+        var input = "   Hello World   ";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("hello-world");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithLeadingAndTrailingDashes_TrimsDashes()
+    {
+        var input = "---Hello World---";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("hello-world");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithMixedCase_ConvertsToLowercase()
+    {
+        var input = "HeLLo WoRLd TeST";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("hello-world-test");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithNumbers_PreservesNumbers()
+    {
+        var input = "Article 123 Version 2024";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("article-123-version-2024");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithExistingDashes_PreservesDashes()
+    {
+        var input = "Hello-World-Test";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("hello-world-test");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithTextExceedingMaxLength_TruncatesToMaxLength()
+    {
+        var input = "This is a very long text that exceeds the maximum length";
+        var maxLength = 25; // Ajusté pour tomber sur un mot complet
+
+        var result = input.ToSlug(maxLength);
+
+        Check.That(result.Length).IsLessOrEqualThan(maxLength);
+        Check.That(result).IsEqualTo("this-is-a-very-long-text");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithTextExceedingDefaultMaxLength_TruncatesTo50Characters()
+    {
+        var input = "This is a very long text that definitely exceeds the default maximum length of fifty characters";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("this-is-a-very-long-text-that-definitely-exceeds-t");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithTruncationEndingWithSpace_TrimsTrailingSpace()
+    {
+        var input = "Hello World This Is A Test";
+        var maxLength = 12; // Coupe après "Hello World "
+
+        var result = input.ToSlug(maxLength);
+
+        Check.That(result).Not.EndsWith("-");
+        Check.That(result).IsEqualTo("hello-world");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithFrenchAccents_RemovesAllAccents()
+    {
+        var input = "À È Ì Ò Ù Â Ê Î Ô Û Ä Ë Ï Ö Ü Ç";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("a-e-i-o-u-a-e-i-o-u-a-e-i-o-u-c");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithEmojisAndSymbols_RemovesEmojisAndSymbols()
+    {
+        var input = "Hello 🎉 World ★ Test ♥";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("hello-world-test");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithUnderscores_RemovesUnderscores()
+    {
+        var input = "Hello_World_Test";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("helloworldtest");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithDots_RemovesDots()
+    {
+        var input = "Hello.World.Test";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("helloworldtest");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithAmpersand_RemovesAmpersand()
+    {
+        var input = "Hello & World";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("hello-world");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithNullString_ReturnsEmptyString()
+    {
+        string? input = null;
+
+        var result = input!.ToSlug();
+
+        Check.That(result).IsEmpty();
+    }
+
+    [TestMethod]
+    public void ToSlug_WithEmptyString_ReturnsEmptyString()
+    {
+        var input = string.Empty;
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEmpty();
+    }
+
+    [TestMethod]
+    public void ToSlug_WithWhitespaceOnly_ReturnsEmptyString()
+    {
+        var input = "     ";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEmpty();
+    }
+
+    [TestMethod]
+    public void ToSlug_WithOnlySpecialCharacters_ReturnsEmptyString()
+    {
+        var input = "@#$%^&*()";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEmpty();
+    }
+
+    [TestMethod]
+    public void ToSlug_WithRealWorldExample_GeneratesValidSlug()
+    {
+        var input = "Les 10 meilleures pratiques pour développer en C# (2024)";
+
+        var result = input.ToSlug();
+
+        Check.That(result).HasSize(50); // Vérifie la troncature par défaut
+        Check.That(result).IsEqualTo("les-10-meilleures-pratiques-pour-developper-en-c-2");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithRealWorldExample_GeneratesValidSlugg()
+    {
+        var input = "Les 10 meilleures pratiques pour développer en C# (2024)";
+
+        var result = input.ToSlug(100); // Pas de troncature
+
+        Check.That(result).IsEqualTo("les-10-meilleures-pratiques-pour-developper-en-c-2024");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithURLLikeText_GeneratesCleanSlug()
+    {
+        var input = "https://example.com/article-test";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("httpsexamplecomarticle-test");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithCustomMaxLength_RespectsCustomLength()
+    {
+        var input = "This is a test text";
+        var maxLength = 10;
+
+        var result = input.ToSlug(maxLength);
+
+        Check.That(result.Length).IsLessOrEqualThan(maxLength);
+        Check.That(result).IsEqualTo("this-is-a");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithMaxLengthZero_ReturnsEmptyString()
+    {
+        var input = "Hello World";
+        var maxLength = 0;
+
+        var result = input.ToSlug(maxLength);
+
+        Check.That(result).IsEmpty();
+    }
+
+    [TestMethod]
+    public void ToSlug_WithMaxLengthOne_ReturnsOneCharacter()
+    {
+        var input = "Hello World";
+        var maxLength = 1;
+
+        var result = input.ToSlug(maxLength);
+
+        Check.That(result).IsEqualTo("h");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithSpanishAccents_RemovesSpanishAccents()
+    {
+        var input = "Español ñ á é í ó ú";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("espanol-n-a-e-i-o-u");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithGermanCharacters_RemovesGermanCharacters()
+    {
+        var input = "Österreich Über ß";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("osterreich-uber");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithConsecutiveSpacesAndDashes_ConsolidatesCorrectly()
+    {
+        var input = "Hello  --  World  --  Test";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("hello-world-test");
+    }
+
+    [TestMethod]
+    public void ToSlug_WithTabsAndNewlines_ReplacesWithDashes()
+    {
+        var input = "Hello\tWorld\nTest\rEnd";
+
+        var result = input.ToSlug();
+
+        Check.That(result).IsEqualTo("hello-world-test-end");
+    }
+}

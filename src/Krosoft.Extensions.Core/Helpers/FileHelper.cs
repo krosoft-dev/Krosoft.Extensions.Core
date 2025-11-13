@@ -190,21 +190,15 @@ public static class FileHelper
                                                                          Encoding encoding)
     {
         Guard.IsNotNullOrWhiteSpace(nameof(filePath), filePath);
-
+         
         var collection = new List<string>();
-        using (var fileStream = File.OpenRead(filePath))
+
+        await using var fileStream = File.OpenRead(filePath);
+        using var streamReader = new StreamReader(fileStream, encoding, true);
+        string? line;
+        while ((line = await streamReader.ReadLineAsync()) != null)
         {
-            using (var streamReader = new StreamReader(fileStream, encoding, true))
-            {
-                while (!streamReader.EndOfStream)
-                {
-                    var line = await streamReader.ReadLineAsync();
-                    if (line != null)
-                    {
-                        collection.Add(line);
-                    }
-                }
-            }
+            collection.Add(line);
         }
 
         return collection;

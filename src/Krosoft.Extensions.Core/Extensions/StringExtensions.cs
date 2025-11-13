@@ -10,9 +10,9 @@ namespace Krosoft.Extensions.Core.Extensions;
 /// </summary>
 public static class StringExtensions
 {
-    private static readonly Regex RemoveInvalidChars = new Regex($"[{Regex.Escape(new string(GetInvalidFileNameChars()))}]",
-                                                                 RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.CultureInvariant
-                                                                 , RegexHelper.MatchTimeout);
+    private static readonly Regex RemoveInvalidChars = new($"[{Regex.Escape(new string(GetInvalidFileNameChars()))}]",
+                                                           RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.CultureInvariant
+                                                           , RegexHelper.MatchTimeout);
 
     /// <summary>
     /// Insère des espaces avant chaque lettre majuscule dans une chaîne de caractères.
@@ -351,5 +351,23 @@ public static class StringExtensions
         }
 
         return source.Substring(0, length);
+    }
+
+    public static string ToSlug(this string? text, int maxLength = 50)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return string.Empty;
+        }
+
+        text = text.ToLowerInvariant();
+        text = RemoveDiacritics(text);
+        text = Regex.Replace(text!, @"[^a-z0-9\s-]", "", RegexOptions.None, RegexHelper.MatchTimeout);
+        text = Regex.Replace(text, @"\s+", " ", RegexOptions.None, RegexHelper.MatchTimeout).Trim();
+        text = text.Truncate(maxLength);
+        text = Regex.Replace(text!, @"\s", "-", RegexOptions.None, RegexHelper.MatchTimeout);
+        text = Regex.Replace(text, "-+", "-", RegexOptions.None, RegexHelper.MatchTimeout);
+
+        return text.Trim('-');
     }
 }
