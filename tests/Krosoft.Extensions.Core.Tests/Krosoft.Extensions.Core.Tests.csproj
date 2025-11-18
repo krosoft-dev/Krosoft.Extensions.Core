@@ -23,7 +23,7 @@
 		<EmbeddedResource Include="Files\XML_UTF8_BOM.xml" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Krosoft.Extensions.Testing" Version="2025.11.18.4422" />
+	  <PackageReference Include="Krosoft.Extensions.Testing" Version="2025.11.18.4460" />
 	  <PackageReference Include="LinqKit.Core" Version="1.2.9" />
 	  <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
 	</ItemGroup>
