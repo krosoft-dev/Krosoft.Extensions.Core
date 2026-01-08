@@ -6,10 +6,10 @@ namespace Krosoft.Extensions.Core.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDateTimeService(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddTransient<IDateTimeService, DateTimeService>();
+        public IServiceCollection AddDateTimeService() => services.AddTransient<IDateTimeService, DateTimeService>();
 
-        return services;
+        public IServiceCollection AddXmlLoaderService() => services.AddTransient<IXmlLoaderService, XmlLoaderService>();
     }
 }

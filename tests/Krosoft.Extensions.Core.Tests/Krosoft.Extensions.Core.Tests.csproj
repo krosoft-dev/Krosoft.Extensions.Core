@@ -10,6 +10,7 @@
 		<None Remove="Files\sample1.pdf" />
 		<None Remove="Files\xml.xml" />
 		<None Remove="Files\XML_UTF8_BOM.xml" />
+		<None Remove="Files\invoice_ubl_invalide.txt" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Files\edi.edi" />
@@ -21,6 +22,7 @@
 		<EmbeddedResource Include="Files\sample1.pdf" />
 		<EmbeddedResource Include="Files\xml.xml" />
 		<EmbeddedResource Include="Files\XML_UTF8_BOM.xml" />
+		<EmbeddedResource Include="Files\invoice_ubl_invalide.txt" />
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Krosoft.Extensions.Testing" Version="2025.12.27.4921" />

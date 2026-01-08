@@ -1,7 +1,7 @@
-﻿using System.Text;
-using Krosoft.Extensions.Core.Helpers;
+﻿using Krosoft.Extensions.Core.Helpers;
 using Krosoft.Extensions.Core.Models.Exceptions;
 using Krosoft.Extensions.Core.Tools;
+using System.Text;
 
 namespace Krosoft.Extensions.Core.Extensions;
 
