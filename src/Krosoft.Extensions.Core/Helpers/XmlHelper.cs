@@ -1,6 +1,7 @@
-﻿using System.Xml.Linq;
-using System.Xml.Serialization;
+﻿using System.Reflection;
 using System.Text;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace Krosoft.Extensions.Core.Helpers;
 
@@ -30,7 +31,7 @@ public static class XmlHelper
 
         return default;
     }
- 
+
     public static XDocument Load(byte[] bytes)
     {
         using (var memoryStream = new MemoryStream(bytes))
@@ -77,4 +78,6 @@ public static class XmlHelper
             return memoryStream.ToArray();
         }
     }
+
+
 }

@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+using System.Xml.Serialization;
 using Krosoft.Extensions.Core.Tools;
 
 namespace Krosoft.Extensions.Core.Extensions;
@@ -80,5 +82,19 @@ public static class EnumExtensions
         {
             return false;
         }
+    }
+
+    public static string? GetXmlEnumValue<TEnum>(this TEnum value) where TEnum : Enum
+    {
+        var name = Enum.GetName(typeof(TEnum), value);
+        if (name == null)
+        {
+            return null;
+        }
+
+        var fieldInfo = typeof(TEnum).GetField(name);
+        var attribute = fieldInfo?.GetCustomAttribute<XmlEnumAttribute>();
+
+        return attribute?.Name ?? name;
     }
 }
