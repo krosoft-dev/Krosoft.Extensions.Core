@@ -1,4 +1,6 @@
-﻿using System.Xml.Serialization;
+﻿using System.Xml.Linq;
+using System.Xml.Serialization;
+using System.Text;
 
 namespace Krosoft.Extensions.Core.Helpers;
 
@@ -27,5 +29,52 @@ public static class XmlHelper
         }
 
         return default;
+    }
+ 
+    public static XDocument Load(byte[] bytes)
+    {
+        using (var memoryStream = new MemoryStream(bytes))
+        {
+            return XDocument.Load(memoryStream);
+        }
+    }
+
+    public static byte[] SaveToBytes(XDocument xDocument)
+    {
+        using (var memoryStream = new MemoryStream())
+        {
+            xDocument.Save(memoryStream);
+            return memoryStream.ToArray();
+        }
+    }
+
+    public static T? Deserialize<T>(byte[] file)
+    {
+        var serializer = new XmlSerializer(typeof(T));
+        using (var reader = new MemoryStream(file))
+        {
+            return (T?)serializer.Deserialize(reader);
+        }
+    }
+
+    public static byte[] SerializeToBytes<T>(T file, params KeyValuePair<string, XNamespace>[] namespaces)
+    {
+        var serializer = new XmlSerializer(typeof(T));
+        var serializerNamespaces = new XmlSerializerNamespaces();
+        foreach (var ns in namespaces)
+        {
+            serializerNamespaces.Add(ns.Key, ns.Value.ToString());
+        }
+
+        using (var memoryStream = new MemoryStream())
+        {
+            using (var writer = new StreamWriter(memoryStream, Encoding.UTF8))
+            {
+                serializer.Serialize(writer, file, serializerNamespaces);
+                writer.Flush();
+            }
+
+            return memoryStream.ToArray();
+        }
     }
 }

@@ -1,7 +1,18 @@
 namespace Krosoft.Extensions.Core.Helpers;
 
-public class EnumHelpers
+public class EnumHelper
 {
+    internal static T ParseEnumOrDefault<T>(string? value, T defaultValue) where T : struct
+    {
+        // Si c'est un enum simple
+        if (Enum.TryParse<T>(value, out var enumValue))
+        {
+            return enumValue;
+        }
+
+        return defaultValue;
+    }
+
     public static IEnumerable<T> GetValues<T>()
     {
         if (!typeof(T).IsEnum)
