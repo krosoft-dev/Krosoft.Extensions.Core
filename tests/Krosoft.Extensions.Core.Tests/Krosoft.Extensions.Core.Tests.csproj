@@ -25,7 +25,7 @@
 		<EmbeddedResource Include="Files\invoice_ubl_invalide.txt" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Krosoft.Extensions.Testing" Version="2025.12.27.4921" />
+	  <PackageReference Include="Krosoft.Extensions.Testing" Version="2026.1.14.5045" />
 	  <PackageReference Include="LinqKit.Core" Version="1.2.9" />
 	  <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
 	</ItemGroup>
