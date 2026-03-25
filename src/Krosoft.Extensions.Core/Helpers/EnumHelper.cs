@@ -42,7 +42,7 @@ public class EnumHelper
             var attr = (XmlEnumAttribute?)Attribute.GetCustomAttribute(fi, typeof(XmlEnumAttribute));
             if (attr != null)
             {
-                return attr!.Name;
+                return attr.Name;
             }
         }
 

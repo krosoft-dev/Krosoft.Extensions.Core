@@ -27,6 +27,7 @@ public class XmlLoaderServiceTests : BaseTest
         Check.That(result.Value).IsNotNull();
         Check.That(result.Value!.LocalName).IsEqualTo("#document");
     }
+
     [TestMethod]
     public void Load_Wrong_Type()
     {

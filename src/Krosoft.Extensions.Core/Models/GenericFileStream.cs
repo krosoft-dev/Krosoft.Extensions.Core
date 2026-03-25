@@ -1,17 +1,11 @@
-﻿using Krosoft.Extensions.Core.Extensions;
+using Krosoft.Extensions.Core.Extensions;
 
 namespace Krosoft.Extensions.Core.Models;
 
-public record GenericFileStream : IFileStream
+public record GenericFileStream : UnsanitizedFileStream
 {
     public GenericFileStream(Stream stream, string fileName, string contentType)
+        : base(stream, fileName.Sanitize() ?? fileName, contentType)
     {
-        Stream = stream;
-        FileName = fileName.Sanitize() ?? fileName;
-        ContentType = contentType;
     }
-
-    public string ContentType { get; }
-    public string FileName { get; }
-    public Stream Stream { get; }
 }
