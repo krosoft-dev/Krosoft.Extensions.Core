@@ -18,6 +18,12 @@ public static class HttpClientExtensions
                                                                                CancellationToken cancellationToken = default)
         => await client.PostAsync(requestUri, StringContentHelper.SerializeAsNewtonsoftJson(data), cancellationToken);
 
+    public static async Task<HttpResponseMessage> PutAsNewtonsoftJsonAsync<T>(this HttpClient client,
+                                                                              string requestUri,
+                                                                              T data,
+                                                                              CancellationToken cancellationToken = default)
+        => await client.PutAsync(requestUri, StringContentHelper.SerializeAsNewtonsoftJson(data), cancellationToken);
+
     public static Task<HttpResponseMessage> DeleteAsNewtonsoftJsonAsync<T>(this HttpClient httpClient,
                                                                            string requestUri,
                                                                            T data,
