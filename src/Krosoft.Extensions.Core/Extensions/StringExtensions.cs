@@ -54,6 +54,8 @@ public static class StringExtensions
         (char)31, ':', '*', '?', '\\', '/'
     };
 
+    public static bool HasValue(this string? value) => !string.IsNullOrWhiteSpace(value);
+
     /// <summary>
     /// Renvoie les n caractères de gauche
     /// </summary>

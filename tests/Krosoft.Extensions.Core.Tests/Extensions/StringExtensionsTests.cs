@@ -22,6 +22,18 @@ public class StringExtensionsTests
     }
 
     [TestMethod]
+    [DataRow(null, false)]
+    [DataRow("", false)]
+    [DataRow("   ", false)]
+    [DataRow("hello", true)]
+    [DataRow(" hello ", true)]
+    public void HasValue_Tests(string? input, bool expectedOutput)
+    {
+        var result = input.HasValue();
+        Check.That(result).IsEqualTo(expectedOutput);
+    }
+
+    [TestMethod]
     [DataRow("", 5, "")]
     [DataRow(null, 5, null)]
     [DataRow("abcdefgh", 3, "abc")]
