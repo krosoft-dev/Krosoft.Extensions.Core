@@ -31,6 +31,23 @@ public static class StringExtensions
 
     public static string? ClearFilePath(this string? text) => StringHelper.ClearFilePath(text);
 
+    /// <summary>
+    /// Garantit que la chaîne se termine par un seul '/'.
+    /// Utile pour une <see cref="System.Net.Http.HttpClient.BaseAddress" /> afin que la combinaison avec une URL
+    /// relative préserve le sous-chemin (ex. <c>/Machinus</c>) au lieu de l'écraser.
+    /// </summary>
+    /// <param name="source">Chaîne source.</param>
+    /// <returns>Chaîne se terminant par un unique '/', ou la valeur d'origine si elle est nulle ou vide.</returns>
+    public static string? EnsureTrailingSlash(this string? source)
+    {
+        if (string.IsNullOrEmpty(source))
+        {
+            return source;
+        }
+
+        return source.TrimEnd('/') + "/";
+    }
+
     public static string? FromUtf8ToAscii(this string? source)
     {
         if (string.IsNullOrEmpty(source))

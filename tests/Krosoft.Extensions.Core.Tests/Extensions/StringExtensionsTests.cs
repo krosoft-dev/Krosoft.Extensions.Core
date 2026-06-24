@@ -131,6 +131,18 @@ public class StringExtensionsTests
     }
 
     [TestMethod]
+    [DataRow(null, null)]
+    [DataRow("", "")]
+    [DataRow("http://example.com", "http://example.com/")] // ajout du slash manquant
+    [DataRow("http://example.com/", "http://example.com/")] // slash déjà présent, inchangé
+    [DataRow("http://example.com/Machinus", "http://example.com/Machinus/")] // préserve le sous-chemin
+    [DataRow("http://example.com//", "http://example.com/")] // normalise les slashs multiples
+    public void EnsureTrailingSlash_Ok(string input, string expectedOutput)
+    {
+        Check.That(input.EnsureTrailingSlash()).IsEqualTo(expectedOutput);
+    }
+
+    [TestMethod]
     public void Replace_Ok()
     {
         char[] separators = { ';', '.', ',' };
