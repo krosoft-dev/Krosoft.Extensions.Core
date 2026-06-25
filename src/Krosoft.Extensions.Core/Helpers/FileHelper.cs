@@ -218,8 +218,6 @@ public static class FileHelper
 
 #if NET7_0_OR_GREATER
         return await sourceReader.ReadToEndAsync(cancellationToken);
-#else
-        return await sourceReader.ReadToEndAsync();
 #endif
     }
 

@@ -15,7 +15,6 @@ public class HttpClientExtensionsTests : BaseTest
     [TestMethod]
     public async Task DeleteAsNewtonsoftJson_SendsDeleteRequestWithJsonContent()
     {
-      
         var requestData = new { Name = "Test" };
         var requestUri = "https://example.com/resource";
 
@@ -31,10 +30,8 @@ public class HttpClientExtensionsTests : BaseTest
 
         var httpClient = new HttpClient(httpMessageHandlerMock.Object);
 
-    
         var response = await httpClient.DeleteAsNewtonsoftJsonAsync(requestUri, requestData);
 
-        
         Check.That(response).IsNotNull();
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
 

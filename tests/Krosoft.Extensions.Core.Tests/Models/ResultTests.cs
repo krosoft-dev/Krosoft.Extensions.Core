@@ -147,10 +147,8 @@ public class ResultTests
     [TestMethod]
     public void Bind_Should_Use_Input_Value()
     {
-      
         var result = Result<int>.Success(3);
 
-    
         var bound = result.Bind(i =>
         {
             if (i % 2 == 0)
@@ -161,7 +159,6 @@ public class ResultTests
             return Result<string>.Failure(new InvalidOperationException("Odd not allowed"));
         });
 
-        
         Check.That(bound.IsFaulted).IsTrue();
         Check.That(bound.Exception).IsInstanceOf<InvalidOperationException>();
         Check.That(bound.Exception!.Message).IsEqualTo("Odd not allowed");
