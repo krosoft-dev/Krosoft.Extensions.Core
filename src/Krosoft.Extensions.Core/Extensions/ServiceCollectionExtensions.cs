@@ -10,6 +10,8 @@ public static class ServiceCollectionExtensions
     {
         public IServiceCollection AddDateTimeService() => services.AddTransient<IDateTimeService, DateTimeService>();
 
+        public IServiceCollection AddIdService() => services.AddTransient<IIdService, IdService>();
+
         public IServiceCollection AddXmlLoaderService() => services.AddTransient<IXmlLoaderService, XmlLoaderService>();
     }
 }

@@ -6,5 +6,3 @@ public class DateTimeService : IDateTimeService
 {
     public DateTimeOffset Now => DateTime.Now;
 }
-
- 
