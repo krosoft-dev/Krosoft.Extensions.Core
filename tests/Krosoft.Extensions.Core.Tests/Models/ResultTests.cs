@@ -86,6 +86,26 @@ public class ResultTests
     }
 
     [TestMethod]
+    public void ImplicitConversion_FromValue_ShouldCreateSuccessResult()
+    {
+        Result<bool> result = true;
+
+        Check.That(result.IsSuccess).IsTrue();
+        Check.That(result.Value).IsTrue();
+        Check.That(result.Exception).IsNull();
+    }
+
+    [TestMethod]
+    public void ImplicitConversion_FromException_ShouldCreateFailureResult()
+    {
+        var exception = new KrosoftException("Test");
+        Result<bool> result = exception;
+
+        Check.That(result.IsFaulted).IsTrue();
+        Check.That(result.Exception).IsSameReferenceAs(exception);
+    }
+
+    [TestMethod]
     public void Map_Should_Transform_Value_When_Success()
     {
         var result = Result<int>.Success(42);
