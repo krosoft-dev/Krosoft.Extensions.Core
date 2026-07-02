@@ -36,6 +36,10 @@ public readonly struct Result<T>
 
     public static Result<T> Failure(Exception e) => new(e);
 
+    public static implicit operator Result<T>(T value) => new(value);
+
+    public static implicit operator Result<T>(Exception e) => new(e);
+
     public Result<TU> Map<TU>(Func<T, TU> transform) =>
         IsSuccess
             ? Result<TU>.Success(transform(Value!))
