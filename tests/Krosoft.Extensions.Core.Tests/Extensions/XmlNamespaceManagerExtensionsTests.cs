@@ -6,8 +6,7 @@ namespace Krosoft.Extensions.Core.Tests.Extensions;
 [TestClass]
 public class XmlNamespaceManagerExtensionsTests
 {
-    private XmlNamespaceManager CreateManager() =>
-        new XmlNamespaceManager(new NameTable());
+    private XmlNamespaceManager CreateManager() => new(new NameTable());
 
     [TestMethod]
     public void AddNamespaces_SingleNamespace_Ok()
@@ -24,11 +23,9 @@ public class XmlNamespaceManagerExtensionsTests
     {
         var nsmgr = CreateManager();
 
-        nsmgr.AddNamespaces(
-            new KeyValuePair<string, string>("a", "http://example.com/a"),
-            new KeyValuePair<string, string>("b", "http://example.com/b"),
-            new KeyValuePair<string, string>("c", "http://example.com/c")
-        );
+        nsmgr.AddNamespaces(new KeyValuePair<string, string>("a", "http://example.com/a"),
+                            new KeyValuePair<string, string>("b", "http://example.com/b"),
+                            new KeyValuePair<string, string>("c", "http://example.com/c"));
 
         Check.That(nsmgr.LookupNamespace("a")).IsEqualTo("http://example.com/a");
         Check.That(nsmgr.LookupNamespace("b")).IsEqualTo("http://example.com/b");
@@ -51,9 +48,9 @@ public class XmlNamespaceManagerExtensionsTests
         var nsmgr = CreateManager();
 
         nsmgr.AddNamespaces(
-            new KeyValuePair<string, string>("ns", "http://example.com/v1"),
-            new KeyValuePair<string, string>("ns", "http://example.com/v2")
-        );
+                            new KeyValuePair<string, string>("ns", "http://example.com/v1"),
+                            new KeyValuePair<string, string>("ns", "http://example.com/v2")
+                           );
 
         Check.That(nsmgr.LookupNamespace("ns")).IsEqualTo("http://example.com/v2");
     }
