@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Invoice xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:ccts="urn:oasis:names:specification:ubl:schema:xsd:CoreComponentParameters-2" xmlns:stat="urn:oasis:names:specification:ubl:schema:xsd:DocumentStatusCode-1.0" xmlns:udt="urn:un:unece:uncefact:data:draft:UnqualifiedDataTypesSchemaModule:2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cec="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:aife="urn:AIFE:Facture:Extension">
+	<cec:UBLExtensions>
+		<cec:UBLExtension>
+			<cec:ExtensionContent>
+				<CategoryCode>A1</CategoryCode>
+			</cec:ExtensionContent>
+		</cec:UBLExtension>
+	</cec:UBLExtensions>
+	<cbc:UBLVersionID>2.2</cbc:UBLVersionID>
+	<cbc:ProfileID>FEN0105A</cbc:ProfileID>
+	<cbc:ID>900002639</cbc:ID>
+	<cbc:IssueDate>2024-01-31</cbc:IssueDate>
+	<cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+	<cbc:Note>B ISOR EXPLOITATION /  Siège Social : 42 RUE ANATOLE FRANCE CS 40210</cbc:Note>
+	<cbc:Note>92594 LEVALLOIS PERRET CEDEX - Tél. : 01 47 86 76 76 - Site internet :</cbc:Note>
+	<cbc:Note>https://www.isor.fr</cbc:Note>
+	<cbc:Note>Agences à Bordeaux, Dijon, Lille, Lyon, Fontenay-sous-Bois, Marseille,</cbc:Note>
+	<cbc:Note>Nanterre, Nantes, Rouen, Strasbourg et Toulouse</cbc:Note>
+	<cbc:Note>S.A.S au capital de 3.000.000 euros - RCS Nanterre B 844 841 403 - SIR</cbc:Note>
+	<cbc:Note>844 841 403 00034 - Code APE 8121Z - TVA intracommunautaire FR 66 844</cbc:Note>
+	<cbc:Note>841 403</cbc:Note>
+	<cbc:Note>Conditions générales : de convention expresse en cas de contestation e</cbc:Note>
+	<cbc:Note>à l&apos;occasion de tout litige, seul le tribunal de commerce de Nanterre</cbc:Note>
+	<cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+	<cac:InvoicePeriod>
+		<cbc:StartDate>2024-01-01</cbc:StartDate>
+		<cbc:EndDate>2024-01-31</cbc:EndDate>
+		<cbc:Description>Periode de facturation</cbc:Description>
+	</cac:InvoicePeriod>
+	<cac:ContractDocumentReference>
+		<cbc:ID>Marché N°121686</cbc:ID>
+		<cbc:DocumentTypeCode>Marché Public</cbc:DocumentTypeCode>
+	</cac:ContractDocumentReference>
+	<cac:ContractDocumentReference>
+		<cbc:ID>0040000249</cbc:ID>
+		<cbc:DocumentTypeCode>Contrat</cbc:DocumentTypeCode>
+	</cac:ContractDocumentReference>
+	<cac:AccountingSupplierParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeName="SIRET">41662058928285</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>ISOR EXPLOITATION MULHOUSE</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:CityName>RICHWILLER</cbc:CityName>
+				<cbc:PostalZone>68120</cbc:PostalZone>
+				<cac:AddressLine>
+					<cbc:Line>9 RUE MANURHIN</cbc:Line>
+				</cac:AddressLine>
+				<cac:Country>
+					<cbc:IdentificationCode>FR</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:Contact>
+				<cbc:Name>DUPONT Nathalie</cbc:Name>
+				<cbc:Telephone>03 68 10 20 30</cbc:Telephone>
+				<cbc:ElectronicMail>n.dupont@isorgroup.com</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:AccountingSupplierParty>
+	<cac:AccountingCustomerParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeName="SIRET">34165180386982</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>CCI ALSACE EUROMETROPOLE</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:CityName>STRASBOURG CEDEX</cbc:CityName>
+				<cbc:PostalZone>67012</cbc:PostalZone>
+				<cac:AddressLine>
+					<cbc:Line>CS 10066</cbc:Line>
+				</cac:AddressLine>
+				<cac:Country>
+					<cbc:IdentificationCode>FR</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+		</cac:Party>
+	</cac:AccountingCustomerParty>
+	<cac:Delivery>
+		<cac:DeliveryLocation>
+			<cbc:ID>34165180386982</cbc:ID>
+			<cbc:Description>CCI ALSACE EUROMETROPOLE</cbc:Description>
+			<cac:Address>
+				<cbc:StreetName>CS 10066</cbc:StreetName>
+				<cbc:CityName>STRASBOURG CEDEX</cbc:CityName>
+				<cbc:PostalZone>67012</cbc:PostalZone>
+				<cac:AddressLine>
+					<cbc:Line>CS 10066</cbc:Line>
+				</cac:AddressLine>
+				<cac:Country>
+					<cbc:IdentificationCode>FR</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:Address>
+		</cac:DeliveryLocation>
+	</cac:Delivery>
+	<cac:PaymentMeans>
+		<cbc:PaymentMeansCode listID="N/ECE 4461 Subset" listAgencyID="NES" listAgencyName="Northern European Subset" listName="Payment Means">42</cbc:PaymentMeansCode>
+		<cbc:PaymentDueDate>2024-03-01</cbc:PaymentDueDate>
+		<cbc:PaymentChannelCode>IBAN</cbc:PaymentChannelCode>
+		<cac:PayeeFinancialAccount>
+			<cbc:ID>FR7630004008130001126500851</cbc:ID>
+			<cac:FinancialInstitutionBranch>
+				<cbc:ID>BNPAFRPPXXX</cbc:ID>
+			</cac:FinancialInstitutionBranch>
+		</cac:PayeeFinancialAccount>
+	</cac:PaymentMeans>
+	<cac:TaxTotal>
+		<cbc:TaxAmount currencyID="EUR">131.6</cbc:TaxAmount>
+		<cac:TaxSubtotal>
+			<cbc:TaxableAmount currencyID="EUR">657.99</cbc:TaxableAmount>
+			<cbc:TaxAmount currencyID="EUR">131.6</cbc:TaxAmount>
+			<cbc:Percent>20.000</cbc:Percent>
+			<cac:TaxCategory>
+				<cac:TaxScheme>
+					<cbc:TaxTypeCode>TVA</cbc:TaxTypeCode>
+				</cac:TaxScheme>
+			</cac:TaxCategory>
+		</cac:TaxSubtotal>
+	</cac:TaxTotal>
+	<cac:LegalMonetaryTotal>
+		<cbc:TaxExclusiveAmount currencyID="EUR">657.99</cbc:TaxExclusiveAmount>
+		<cbc:TaxInclusiveAmount currencyID="EUR">789.59</cbc:TaxInclusiveAmount>
+		<cbc:PayableAmount currencyID="EUR">789.59</cbc:PayableAmount>
+	</cac:LegalMonetaryTotal>
+	<cac:InvoiceLine>
+		<cbc:ID>10</cbc:ID>
+		<cbc:Note>Site de livraison : 0010154909</cbc:Note>
+		<cbc:InvoicedQuantity unitCode="UNITE">1.000</cbc:InvoicedQuantity>
+		<cbc:LineExtensionAmount currencyID="EUR">134.99</cbc:LineExtensionAmount>
+		<cac:Item>
+			<cbc:Name>Nettoyage de vos locaux</cbc:Name>
+			<cac:ClassifiedTaxCategory>
+				<cbc:Percent>20.000</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:TaxTypeCode>TVA NOR</cbc:TaxTypeCode>
+				</cac:TaxScheme>
+			</cac:ClassifiedTaxCategory>
+		</cac:Item>
+		<cac:Price>
+			<cbc:PriceAmount currencyID="EUR">134.99</cbc:PriceAmount>
+			<cbc:BaseQuantity unitCode="UNITE">1</cbc:BaseQuantity>
+		</cac:Price>
+	</cac:InvoiceLine>
+	<cac:InvoiceLine>
+		<cbc:ID>20</cbc:ID>
+		<cbc:Note>Site de livraison : 0010154909</cbc:Note>
+		<cbc:InvoicedQuantity unitCode="UNITE">1.000</cbc:InvoicedQuantity>
+		<cbc:LineExtensionAmount currencyID="EUR">263.1</cbc:LineExtensionAmount>
+		<cac:Item>
+			<cbc:Name>Vitrerie de vos locaux</cbc:Name>
+			<cac:ClassifiedTaxCategory>
+				<cbc:Percent>20.000</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:TaxTypeCode>TVA NOR</cbc:TaxTypeCode>
+				</cac:TaxScheme>
+			</cac:ClassifiedTaxCategory>
+		</cac:Item>
+		<cac:Price>
+			<cbc:PriceAmount currencyID="EUR">263.1</cbc:PriceAmount>
+			<cbc:BaseQuantity unitCode="UNITE">1</cbc:BaseQuantity>
+		</cac:Price>
+	</cac:InvoiceLine>
+	<cac:InvoiceLine>
+		<cbc:ID>30</cbc:ID>
+		<cbc:Note>Site de livraison : 0010154909</cbc:Note>
+		<cbc:InvoicedQuantity unitCode="UNITE">1.000</cbc:InvoicedQuantity>
+		<cbc:LineExtensionAmount currencyID="EUR">259.9</cbc:LineExtensionAmount>
+		<cac:Item>
+			<cbc:Name>Fournitures sanitaires mensuel</cbc:Name>
+			<cac:ClassifiedTaxCategory>
+				<cbc:Percent>20.000</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:TaxTypeCode>TVA NOR</cbc:TaxTypeCode>
+				</cac:TaxScheme>
+			</cac:ClassifiedTaxCategory>
+		</cac:Item>
+		<cac:Price>
+			<cbc:PriceAmount currencyID="EUR">259.9</cbc:PriceAmount>
+			<cbc:BaseQuantity unitCode="UNITE">1</cbc:BaseQuantity>
+		</cac:Price>
+	</cac:InvoiceLine>
+</Invoice>

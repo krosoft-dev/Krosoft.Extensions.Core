@@ -1,6 +1,9 @@
 ﻿using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Krosoft.Extensions.Core.Models;
+using Krosoft.Extensions.Core.Models.Exceptions;
 
 namespace Krosoft.Extensions.Core.Helpers;
 
@@ -27,6 +30,28 @@ public static class XmlHelper
         }
 
         return default;
+    }
+
+    public static Result<XmlDocument> Load(MemoryStream fitStream, string rootName)
+    {
+        var xmlDocument = new XmlDocument();
+
+        try
+        {
+            xmlDocument.Load(fitStream);
+        }
+        catch (Exception e)
+        {
+            return new KrosoftFunctionalException($"Le fichier '{rootName}' n'a pas pu être lu : {e.Message}", e);
+        }
+
+        var localName = xmlDocument.DocumentElement?.LocalName;
+        if (localName != rootName)
+        {
+            return new KrosoftFunctionalException($"Le fichier n'est pas valide (élément racine attendu : '{rootName}', trouvé : '{localName}').");
+        }
+
+        return xmlDocument;
     }
 
     public static XDocument Load(byte[] bytes)

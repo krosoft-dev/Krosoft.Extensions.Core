@@ -11,6 +11,9 @@
 		<None Remove="Files\xml.xml" />
 		<None Remove="Files\XML_UTF8_BOM.xml" />
 		<None Remove="Files\invoice_ubl_invalide.txt" />
+		<None Remove="Files\sample_2.xml" />
+		<None Remove="Files\sample_ubl_ko.xml" />
+		<None Remove="Files\invalide.txt" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Files\edi.edi" />
@@ -23,6 +26,9 @@
 		<EmbeddedResource Include="Files\xml.xml" />
 		<EmbeddedResource Include="Files\XML_UTF8_BOM.xml" />
 		<EmbeddedResource Include="Files\invoice_ubl_invalide.txt" />
+		<EmbeddedResource Include="Files\sample_2.xml" />
+		<EmbeddedResource Include="Files\sample_ubl_ko.xml" />
+		<EmbeddedResource Include="Files\invalide.txt" />
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Krosoft.Extensions.Testing" Version="2026.7.12.8120" />

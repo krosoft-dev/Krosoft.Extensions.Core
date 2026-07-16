@@ -1,0 +1,38 @@
+<StandardBusinessDocument
+xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader">
+    <StandardBusinessDocumentHeader>
+        <HeaderVersion>1.0</HeaderVersion>
+        <Sender>
+            <Identifier Authority="iso6523-actorid-upis">0225:987654321</Identifier>
+        </Sender>
+        <Receiver>
+            <Identifier Authority="iso6523-actorid-upis">0225:123456789</Identifier>
+        </Receiver>
+        <DocumentIdentification>
+            <Standard>urn:un:unece:uncefact:data:standard:CrossDomainAcknowledgementAndResponse:100</Standard>
+            <TypeVersion>D22B</TypeVersion>
+            <InstanceIdentifier>6f386b28-f4a3-4d74-bfbb-31668bd153b7</InstanceIdentifier>
+            <Type>CrossDomainAcknowledgementAndResponse</Type>
+            <CreationDateAndTime>2024-02-09T09:41:10Z</CreationDateAndTime>
+        </DocumentIdentification>
+        <BusinessScope>
+            <Scope>
+                <Type>DOCUMENTID</Type>
+                <InstanceIdentifier> urn:un:unece:uncefact:data:standard:CrossDomainAcknowledgementAndResponse:100:: CrossDomainAcknowledgementAndResponse##urn:peppol.france:billing:cdv:1.0::D22B </InstanceIdentifier>
+                <Identifier>busdox-docid-qns</Identifier>
+            </Scope>
+            <Scope>
+                <Type>PROCESSID</Type>
+                <InstanceIdentifier> urn:fdc:peppol:france:billing:regulated </InstanceIdentifier>
+                <Identifier>cenbii-procid-ubl</Identifier>
+            </Scope>
+            <Scope>
+                <Type>COUNTRY_C1</Type>
+                <InstanceIdentifier>FR</InstanceIdentifier>
+            </Scope>
+        </BusinessScope>
+    </StandardBusinessDocumentHeader>
+    <CrossDomainAcknowledgementAndResponse xmlns="urn:un:unece:uncefact:data:standard:CrossDomainAcknowledgementAndResponse:100">
+        <!-- Payload: CDAR  -->
+    </CrossDomainAcknowledgementAndResponse>
+</StandardBusinessDocument>
