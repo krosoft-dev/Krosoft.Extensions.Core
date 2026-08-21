@@ -30,31 +30,44 @@ public static class JsonHelper
         return results;
     }
 
-    public static bool IsValid(string input)
+    public static bool IsValid(string input) => TryParse(input, out _);
+
+    /// <summary>
+    ///     Normalise un JSON dans une forme strictement conforme à la RFC 8259 : caractères de contrôle échappés et
+    ///     caractères NUL supprimés. Newtonsoft accepte à la lecture des séquences que des consommateurs stricts
+    ///     (PostgreSQL json/jsonb, System.Text.Json...) rejettent : cette méthode les élimine.
+    /// </summary>
+    /// <returns>Le JSON normalisé, ou <c>null</c> si l'entrée n'est pas un objet ou un tableau JSON exploitable.</returns>
+    public static string? Normalize(string? input)
     {
-        if (string.IsNullOrWhiteSpace(input))
+        if (!TryParse(input, out var token))
         {
-            return false;
+            return null;
         }
 
-        var json = input.Trim();
+        RemoveNullChars(token!);
 
-        if ((json.StartsWith('{') && json.EndsWith('}')) || //For object
-            (json.StartsWith('[') && json.EndsWith(']'))) //For array
-        {
-            try
-            {
-                JToken.Parse(json);
-                return true;
-            }
-            catch (JsonReaderException)
-            {
-                return false;
-            }
-        }
-
-        return false;
+        return token!.ToString(Formatting.None);
     }
+
+    /// <summary>
+    ///     Supprime les caractères NUL de toutes les valeurs texte du token : ils sont refusés par la plupart des
+    ///     moteurs de stockage, y compris sous leur forme échappée.
+    /// </summary>
+    public static void RemoveNullChars(JToken token)
+    {
+        if (token is not JContainer container)
+        {
+            return;
+        }
+
+        foreach (var value in container.Descendants().OfType<JValue>().Where(v => v.Type == JTokenType.String))
+        {
+            value.Value = RemoveNullChars((string?)value.Value);
+        }
+    }
+
+    public static string? RemoveNullChars(string? value) => value?.Replace("\0", string.Empty);
 
     public static JObject ReplacePath<T>(this JToken root, string path, T? newValue)
     {
@@ -93,5 +106,33 @@ public static class JsonHelper
         var json = JsonConvert.SerializeObject(obj);
         var dataBase64 = Base64Helper.StringToBase64(json);
         return dataBase64;
+    }
+
+    private static bool TryParse(string? input, out JToken? token)
+    {
+        token = null;
+
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return false;
+        }
+
+        var json = input.Trim();
+
+        if ((!json.StartsWith('{') || !json.EndsWith('}')) && //For object
+            (!json.StartsWith('[') || !json.EndsWith(']'))) //For array
+        {
+            return false;
+        }
+
+        try
+        {
+            token = JToken.Parse(json);
+            return true;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
     }
 }

@@ -8,6 +8,8 @@ namespace Krosoft.Extensions.Core.Tests.Helpers;
 [TestClass]
 public class JsonHelperTests
 {
+    private const char NullChar = (char)0;
+
     [TestMethod]
     public void GetTest()
     {
@@ -23,6 +25,54 @@ public class JsonHelperTests
         var json = AssemblyHelper.ReadAsString(typeof(JsonHelperTests).Assembly, $"{nameof(Item)}.json", EncodingHelper.GetEuropeOccidentale());
 
         Check.That(JsonHelper.IsValid(json)).IsEqualTo(true);
+    }
+
+    [TestMethod]
+    public void Normalize_WhenArray_ShouldReturnCompactJson()
+    {
+        var result = JsonHelper.Normalize("[ 1, 2, { 'name': 'test' } ]");
+
+        Check.That(result).IsEqualTo("[1,2,{\"name\":\"test\"}]");
+    }
+
+    [TestMethod]
+    public void Normalize_WhenInputIsNotJson_ShouldReturnNull()
+    {
+        Check.That(JsonHelper.Normalize("un message texte")).IsNull();
+        Check.That(JsonHelper.Normalize("{ \"name\": }")).IsNull();
+        Check.That(JsonHelper.Normalize(null)).IsNull();
+        Check.That(JsonHelper.Normalize(string.Empty)).IsNull();
+    }
+
+    [TestMethod]
+    public void Normalize_WhenLooseJson_ShouldReturnStrictJson()
+    {
+        var result = JsonHelper.Normalize("{ 'name': 'test', /* commentaire */ 'age': 25, }");
+
+        Check.That(result).IsEqualTo("{\"name\":\"test\",\"age\":25}");
+    }
+
+    [TestMethod]
+    public void Normalize_WhenNullCharInValue_ShouldRemoveIt()
+    {
+        var result = JsonHelper.Normalize("{ \"name\": \"te" + NullChar + "st\" }");
+
+        Check.That(result).IsEqualTo("{\"name\":\"test\"}");
+    }
+
+    [TestMethod]
+    public void Normalize_WhenUnescapedControlCharInValue_ShouldEscapeIt()
+    {
+        var result = JsonHelper.Normalize("{ \"name\": \"li\ngne\" }");
+
+        Check.That(result).IsEqualTo("{\"name\":\"li\\ngne\"}");
+    }
+
+    [TestMethod]
+    public void RemoveNullChars_WhenNullCharInString_ShouldRemoveIt()
+    {
+        Check.That(JsonHelper.RemoveNullChars("te" + NullChar + "st")).IsEqualTo("test");
+        Check.That(JsonHelper.RemoveNullChars(null)).IsNull();
     }
 
     [TestMethod]
@@ -136,4 +186,4 @@ public class JsonHelperTests
 
         Check.That(base64).IsEqualTo("eyJpZCI6InJlcXVlc3RJZCIsImp3dCI6Imp3dFRva2VuIn0=");
     }
-}
+}
