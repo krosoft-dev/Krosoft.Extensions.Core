@@ -2,6 +2,8 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using Krosoft.Extensions.Core.Helpers;
+using Krosoft.Extensions.Core.Models.Exceptions;
+using Krosoft.Extensions.Core.Tools;
 
 namespace Krosoft.Extensions.Core.Extensions;
 
@@ -328,6 +330,40 @@ public static class StringExtensions
         }
 
         return char.ToLowerInvariant(source[0]) + source.Substring(1);
+    }
+
+    /// <summary>
+    /// Convertit une chaîne en <see cref="Guid" />.
+    /// Lève une <see cref="KrosoftTechnicalException" /> si la chaîne est nulle, vide ou n'est pas un GUID valide.
+    /// </summary>
+    /// <param name="source">Chaîne à convertir.</param>
+    /// <param name="argumentName">Nom de l'argument utilisé dans le message d'erreur.</param>
+    /// <returns>Le <see cref="Guid" /> correspondant.</returns>
+    public static Guid ToGuid(this string? source, string argumentName = "source")
+    {
+        Guard.IsNotNullOrWhiteSpace(argumentName, source);
+
+        if (!Guid.TryParse(source, out var guid))
+        {
+            throw new KrosoftTechnicalException($"La variable '{argumentName}' n'est pas un GUID valide.");
+        }
+
+        return guid;
+    }
+
+    /// <summary>
+    /// Convertit une chaîne en <see cref="Guid" />, ou renvoie <c>null</c> si la chaîne est nulle, vide ou n'est pas un GUID valide.
+    /// </summary>
+    /// <param name="source">Chaîne à convertir.</param>
+    /// <returns>Le <see cref="Guid" /> correspondant, ou <c>null</c>.</returns>
+    public static Guid? ToGuidOrNull(this string? source)
+    {
+        if (string.IsNullOrWhiteSpace(source))
+        {
+            return null;
+        }
+
+        return Guid.TryParse(source, out var guid) ? guid : null;
     }
 
     public static int ToInteger(this string? source) => NumberHelper.ToInteger(source);
