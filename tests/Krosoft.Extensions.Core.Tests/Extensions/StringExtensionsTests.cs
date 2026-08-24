@@ -1,4 +1,5 @@
 ﻿using Krosoft.Extensions.Core.Extensions;
+using Krosoft.Extensions.Core.Models.Exceptions;
 
 namespace Krosoft.Extensions.Core.Tests.Extensions;
 
@@ -598,5 +599,56 @@ public class StringExtensionsTests
         var result = input.ToSlug();
 
         Check.That(result).IsEqualTo("hello-world-test-end");
+    }
+
+    [TestMethod]
+    public void ToGuid_ValidGuid_ReturnsGuid()
+    {
+        var expected = Guid.NewGuid();
+
+        var result = expected.ToString().ToGuid();
+
+        Check.That(result).IsEqualTo(expected);
+    }
+
+    [TestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    [DataRow("   ")]
+    public void ToGuid_NullOrWhiteSpace_Throws(string? input)
+    {
+        Check.ThatCode(() => input.ToGuid())
+             .Throws<KrosoftTechnicalException>()
+             .WithMessage("La variable 'source' est vide ou non renseignée.");
+    }
+
+    [TestMethod]
+    public void ToGuid_InvalidGuid_Throws()
+    {
+        Check.ThatCode(() => "not-a-guid".ToGuid())
+             .Throws<KrosoftTechnicalException>()
+             .WithMessage("La variable 'source' n'est pas un GUID valide.");
+    }
+
+    [TestMethod]
+    public void ToGuidOrNull_ValidGuid_ReturnsGuid()
+    {
+        var expected = Guid.NewGuid();
+
+        var result = expected.ToString().ToGuidOrNull();
+
+        Check.That(result).IsEqualTo(expected);
+    }
+
+    [TestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    [DataRow("   ")]
+    [DataRow("not-a-guid")]
+    public void ToGuidOrNull_NullEmptyOrInvalid_ReturnsNull(string? input)
+    {
+        var result = input.ToGuidOrNull();
+
+        Check.That(result).IsNull();
     }
 }
