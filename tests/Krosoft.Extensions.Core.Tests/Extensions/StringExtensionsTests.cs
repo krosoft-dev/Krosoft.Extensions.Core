@@ -617,17 +617,17 @@ public class StringExtensionsTests
     [DataRow("   ")]
     public void ToGuid_NullOrWhiteSpace_Throws(string? input)
     {
-        Check.ThatCode(() => input.ToGuid("userId"))
+        Check.ThatCode(() => input.ToGuid())
              .Throws<KrosoftTechnicalException>()
-             .WithMessage("La variable 'userId' est vide ou non renseignée.");
+             .WithMessage("La variable 'source' est vide ou non renseignée.");
     }
 
     [TestMethod]
     public void ToGuid_InvalidGuid_Throws()
     {
-        Check.ThatCode(() => "not-a-guid".ToGuid("userId"))
+        Check.ThatCode(() => "not-a-guid".ToGuid())
              .Throws<KrosoftTechnicalException>()
-             .WithMessage("La variable 'userId' n'est pas un GUID valide.");
+             .WithMessage("La variable 'source' n'est pas un GUID valide.");
     }
 
     [TestMethod]

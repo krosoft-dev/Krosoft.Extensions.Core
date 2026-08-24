@@ -337,15 +337,14 @@ public static class StringExtensions
     /// Lève une <see cref="KrosoftTechnicalException" /> si la chaîne est nulle, vide ou n'est pas un GUID valide.
     /// </summary>
     /// <param name="source">Chaîne à convertir.</param>
-    /// <param name="argumentName">Nom de l'argument utilisé dans le message d'erreur.</param>
     /// <returns>Le <see cref="Guid" /> correspondant.</returns>
-    public static Guid ToGuid(this string? source, string argumentName = "source")
+    public static Guid ToGuid(this string? source)
     {
-        Guard.IsNotNullOrWhiteSpace(argumentName, source);
+        Guard.IsNotNullOrWhiteSpace(nameof(source), source);
 
         if (!Guid.TryParse(source, out var guid))
         {
-            throw new KrosoftTechnicalException($"La variable '{argumentName}' n'est pas un GUID valide.");
+            throw new KrosoftTechnicalException($"La variable '{nameof(source)}' n'est pas un GUID valide.");
         }
 
         return guid;
