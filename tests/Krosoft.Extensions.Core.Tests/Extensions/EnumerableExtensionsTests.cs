@@ -207,4 +207,81 @@ public class EnumerableExtensionsTests
         Check.That(adresses.Select(x => x.Ligne1))
              .ContainsExactly("street6Line1", "street5Line1", "street4Line1", "street3Line1", "street2Line1", "street1Line1");
     }
+
+    [TestMethod]
+    public void SortBy_CustomSort_Ok()
+    {
+        var paginationRequest = new PaginationRequest
+        {
+            SortBy = new HashSet<string> { $"{nameof(Addresse.CodePostal)}:asc" }
+        };
+
+        // Le sélecteur custom prime sur la résolution par réflexion : ici il inverse l'ordre numérique.
+        var customSorts = new Dictionary<string, Func<Addresse, object?>>
+        {
+            [nameof(Addresse.CodePostal)] = x => -int.Parse(x.CodePostal.Replace("zipcode", string.Empty))
+        };
+
+        var adresses = AddresseFactory.GetAdresses().SortBy(paginationRequest, customSorts).ToList();
+        Check.That(adresses).HasSize(6);
+        Check.That(adresses.Select(x => x.CodePostal))
+             .ContainsExactly("zipcode6", "zipcode5", "zipcode4", "zipcode3", "zipcode2", "zipcode1");
+    }
+
+    [TestMethod]
+    public void SortBy_CustomSort_KeyInsensible_Ok()
+    {
+        var paginationRequest = new PaginationRequest
+        {
+            SortBy = new HashSet<string> { "codepostal:asc" }
+        };
+
+        var customSorts = new Dictionary<string, Func<Addresse, object?>>
+        {
+            [nameof(Addresse.CodePostal)] = x => -int.Parse(x.CodePostal.Replace("zipcode", string.Empty))
+        };
+
+        var adresses = AddresseFactory.GetAdresses().SortBy(paginationRequest, customSorts).ToList();
+        Check.That(adresses.Select(x => x.CodePostal))
+             .ContainsExactly("zipcode6", "zipcode5", "zipcode4", "zipcode3", "zipcode2", "zipcode1");
+    }
+
+    [TestMethod]
+    public void SortBy_CustomSort_FallbackReflexion_Ok()
+    {
+        var paginationRequest = new PaginationRequest
+        {
+            SortBy = new HashSet<string> { $"{nameof(Addresse.Ligne1)}:desc" }
+        };
+
+        // La clé triée n'est pas dans les tris custom : la résolution par réflexion s'applique.
+        var customSorts = new Dictionary<string, Func<Addresse, object?>>
+        {
+            [nameof(Addresse.CodePostal)] = x => x.CodePostal
+        };
+
+        var adresses = AddresseFactory.GetAdresses().SortBy(paginationRequest, customSorts).ToList();
+        Check.That(adresses.Select(x => x.Ligne1))
+             .ContainsExactly("street6Line1", "street5Line1", "street4Line1", "street3Line1", "street2Line1", "street1Line1");
+    }
+
+    [TestMethod]
+    public void ToPagination_CustomSort_Ok()
+    {
+        var paginationRequest = new PaginationRequest
+        {
+            PageNumber = 1,
+            PageSize = 2,
+            SortBy = new HashSet<string> { $"{nameof(Addresse.CodePostal)}:asc" }
+        };
+
+        var customSorts = new Dictionary<string, Func<Addresse, object?>>
+        {
+            [nameof(Addresse.CodePostal)] = x => -int.Parse(x.CodePostal.Replace("zipcode", string.Empty))
+        };
+
+        var adresses = AddresseFactory.GetAdresses().ToPagination(paginationRequest, customSorts);
+        Check.That(adresses.TotalCount).IsEqualTo(6);
+        Check.That(adresses.Items.Select(x => x.CodePostal)).ContainsExactly("zipcode6", "zipcode5");
+    }
 }

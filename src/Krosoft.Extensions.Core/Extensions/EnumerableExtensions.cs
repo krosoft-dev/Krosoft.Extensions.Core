@@ -325,14 +325,15 @@ public static class EnumerableExtensions
     private static readonly MethodInfo? ToLowerMethod = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
 
     public static PaginationResult<T> ToPagination<T>(this IEnumerable<T> items,
-                                                      ISearchPaginationRequest paginationRequest)
+                                                      ISearchPaginationRequest paginationRequest,
+                                                      IDictionary<string, Func<T, object?>>? customSorts = null)
     {
         Guard.IsNotNull(nameof(items), items);
         Guard.IsNotNull(nameof(paginationRequest), paginationRequest);
 
         var list = items.ToList();
 
-        var pagined = list.SortBy(paginationRequest)
+        var pagined = list.SortBy(paginationRequest, customSorts)
                           .Skip((paginationRequest.PageNumber - 1) * paginationRequest.PageSize)
                           .Take(paginationRequest.PageSize);
 
@@ -380,11 +381,18 @@ public static class EnumerableExtensions
     }
 
     public static IEnumerable<T> SortBy<T>(this IEnumerable<T> query,
-                                           IPaginationRequest request)
+                                           IPaginationRequest request,
+                                           IDictionary<string, Func<T, object?>>? customSorts = null)
     {
         if (request.SortBy == null || !request.SortBy.Any())
         {
             return query;
+        }
+
+        // Les clés custom sont résolues sans tenir compte de la casse, comme la résolution par réflexion.
+        if (customSorts is { Count: > 0 })
+        {
+            customSorts = new Dictionary<string, Func<T, object?>>(customSorts, StringComparer.OrdinalIgnoreCase);
         }
 
         IOrderedEnumerable<T>? orderedQuery = null;
@@ -396,23 +404,34 @@ public static class EnumerableExtensions
             {
                 var key = parts[0];
                 var order = parts[1].ToLower();
-                var prop = typeof(T).GetProperty(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-                if (prop is null)
+
+                Func<T, object?>? keySelector = null;
+                if (customSorts != null && customSorts.TryGetValue(key, out var customSort))
                 {
-                    throw new KrosoftTechnicalException($"Impossible de déterminer la colonne à partir de la clé suivante : {key}");
+                    keySelector = customSort;
+                }
+                else
+                {
+                    var prop = typeof(T).GetProperty(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                    if (prop is null)
+                    {
+                        throw new KrosoftTechnicalException($"Impossible de déterminer la colonne à partir de la clé suivante : {key}");
+                    }
+
+                    keySelector = x => prop.GetValue(x);
                 }
 
                 if (orderedQuery == null)
                 {
                     orderedQuery = order == "asc"
-                        ? query.OrderBy(x => prop.GetValue(x))
-                        : query.OrderByDescending(x => prop.GetValue(x));
+                        ? query.OrderBy(keySelector)
+                        : query.OrderByDescending(keySelector);
                 }
                 else
                 {
                     orderedQuery = order == "asc"
-                        ? orderedQuery.ThenBy(x => prop.GetValue(x))
-                        : orderedQuery.ThenByDescending(x => prop.GetValue(x));
+                        ? orderedQuery.ThenBy(keySelector)
+                        : orderedQuery.ThenByDescending(keySelector);
                 }
             }
         }
