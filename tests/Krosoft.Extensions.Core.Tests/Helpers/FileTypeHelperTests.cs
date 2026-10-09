@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.IO.Compression;
+using System.Reflection;
 using System.Text;
 using Krosoft.Extensions.Core.Extensions;
 using Krosoft.Extensions.Core.Helpers;
@@ -86,9 +87,71 @@ public class FileTypeHelperTests
     [TestMethod]
     public void IsPdf_WithNullBytes_ThrowsException()
     {
-        Check.ThatCode(() => FileTypeHelper.IsPdf(null!))
+        Check.ThatCode(() => FileTypeHelper.IsPdf((byte[])null!))
              .Throws<KrosoftTechnicalException>()
              .WithMessage("La variable 'fileBytes' n'est pas renseignée.");
+    }
+
+    [TestMethod]
+    public void IsPdf_WithPdfStream_ReturnsTrueAndKeepsPosition()
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("%PDF-1.7 contenu"));
+
+        var result = FileTypeHelper.IsPdf(stream);
+
+        Check.That(result).IsTrue();
+        Check.That(stream.Position).IsEqualTo(0L);
+    }
+
+    [TestMethod]
+    public void IsPdf_WithXmlStream_ReturnsFalse()
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("<?xml version='1.0'?><root/>"));
+
+        var result = FileTypeHelper.IsPdf(stream);
+
+        Check.That(result).IsFalse();
+        Check.That(stream.Position).IsEqualTo(0L);
+    }
+
+    [TestMethod]
+    public void IsPdf_WithStreamNotAtStart_RestoresPosition()
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("xx%PDF-1.7"));
+        stream.Position = 2;
+
+        var result = FileTypeHelper.IsPdf(stream);
+
+        Check.That(result).IsTrue();
+        Check.That(stream.Position).IsEqualTo(2L);
+    }
+
+    [TestMethod]
+    public void IsPdf_WithEmptyStream_ReturnsFalse()
+    {
+        using var stream = new MemoryStream();
+
+        var result = FileTypeHelper.IsPdf(stream);
+
+        Check.That(result).IsFalse();
+    }
+
+    [TestMethod]
+    public void IsPdf_WithNullStream_ThrowsException()
+    {
+        Check.ThatCode(() => FileTypeHelper.IsPdf((Stream)null!))
+             .Throws<KrosoftTechnicalException>()
+             .WithMessage("La variable 'stream' n'est pas renseignée.");
+    }
+
+    [TestMethod]
+    public void IsPdf_WithNonSeekableStream_ThrowsException()
+    {
+        using var stream = new GZipStream(new MemoryStream(), CompressionMode.Decompress);
+
+        Check.ThatCode(() => FileTypeHelper.IsPdf(stream))
+             .Throws<KrosoftTechnicalException>()
+             .WithMessage("Le flux doit être repositionnable pour en lire l'en-tête.");
     }
 
     [TestMethod]

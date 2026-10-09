@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Krosoft.Extensions.Core.Models.Exceptions;
 using Krosoft.Extensions.Core.Tools;
 
 namespace Krosoft.Extensions.Core.Helpers;
@@ -61,6 +62,26 @@ public static class FileTypeHelper
 
         var fileHeader = Encoding.UTF8.GetString(fileBytes, 0, Math.Min(fileBytes.Length, 5));
         return fileHeader.StartsWith("%PDF-");
+    }
+
+    public static bool IsPdf(Stream stream) => IsPdf(ReadHeader(stream, 5));
+
+    // Lit les premiers octets sans consommer le flux : la position d'origine est restaurée.
+    private static byte[] ReadHeader(Stream stream, int length)
+    {
+        Guard.IsNotNull(nameof(stream), stream);
+
+        if (!stream.CanSeek)
+        {
+            throw new KrosoftTechnicalException("Le flux doit être repositionnable pour en lire l'en-tête.");
+        }
+
+        var position = stream.Position;
+        var header = new byte[length];
+        var read = stream.ReadAtLeast(header, length, false);
+        stream.Position = position;
+
+        return header[..read];
     }
 
     public static bool IsXml(byte[] fileBytes)
