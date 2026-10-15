@@ -260,6 +260,30 @@ public class StringExtensionsTests
     }
 
     [TestMethod]
+    [DataRow(null, "")]
+    [DataRow("", "")]
+    [DataRow("   ", "")]
+    [DataRow(" abc ", "abc")]
+    [DataRow("abc", "abc")]
+    public void TrimToEmpty_Tests(string? input, string expectedOutput)
+    {
+        var result = input.TrimToEmpty();
+        Check.That(result).IsEqualTo(expectedOutput);
+    }
+
+    [TestMethod]
+    [DataRow(null, null)]
+    [DataRow("", null)]
+    [DataRow("   ", null)]
+    [DataRow(" abc ", "abc")]
+    [DataRow("abc", "abc")]
+    public void TrimToNull_Tests(string? input, string? expectedOutput)
+    {
+        var result = input.TrimToNull();
+        Check.That(result).IsEqualTo(expectedOutput);
+    }
+
+    [TestMethod]
     [DataRow(null, 10, null)]
     [DataRow("", 10, "")]
     [DataRow("abcdefghij", 5, "abcde")]

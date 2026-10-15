@@ -386,6 +386,36 @@ public static class StringExtensions
     }
 
     /// <summary>
+    /// Supprime les espaces en début et fin de chaîne, ou renvoie <see cref="string.Empty" /> si la chaîne est nulle.
+    /// </summary>
+    /// <param name="source">Texte source.</param>
+    /// <returns>La chaîne trimée, ou <see cref="string.Empty" />.</returns>
+    public static string TrimToEmpty(this string? source)
+    {
+        if (string.IsNullOrEmpty(source))
+        {
+            return string.Empty;
+        }
+
+        return source.Trim();
+    }
+
+    /// <summary>
+    /// Supprime les espaces en début et fin de chaîne, ou renvoie <c>null</c> si la chaîne est nulle, vide ou uniquement composée d'espaces.
+    /// </summary>
+    /// <param name="source">Texte source.</param>
+    /// <returns>La chaîne trimée, ou <c>null</c>.</returns>
+    public static string? TrimToNull(this string? source)
+    {
+        if (string.IsNullOrWhiteSpace(source))
+        {
+            return null;
+        }
+
+        return source.Trim();
+    }
+
+    /// <summary>
     /// Tronque une chaine si sa longueur est plus grande que maxLenght
     /// Sinon, renvoie la même référence
     /// </summary>
