@@ -14,6 +14,8 @@
 		<None Remove="Files\sample_2.xml" />
 		<None Remove="Files\sample_ubl_ko.xml" />
 		<None Remove="Files\invalide.txt" />
+		<None Remove="Files\ubl_sans_prologue.xml" />
+		<None Remove="Files\ubl_texte_avant_racine.txt" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Files\edi.edi" />
@@ -29,6 +31,8 @@
 		<EmbeddedResource Include="Files\sample_2.xml" />
 		<EmbeddedResource Include="Files\sample_ubl_ko.xml" />
 		<EmbeddedResource Include="Files\invalide.txt" />
+		<EmbeddedResource Include="Files\ubl_sans_prologue.xml" />
+		<EmbeddedResource Include="Files\ubl_texte_avant_racine.txt" />
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Krosoft.Extensions.Testing" Version="2026.9.21.10826" />

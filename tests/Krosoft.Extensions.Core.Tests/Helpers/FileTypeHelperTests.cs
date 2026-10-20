@@ -191,13 +191,92 @@ public class FileTypeHelperTests
     }
 
     [TestMethod]
-    public void IsXml_WithInvalidXmlBytes_ReturnsFalse()
+    [DataRow("<root>")]
+    [DataRow("<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\"></Invoice>")]
+    [DataRow("<_root/>")]
+    [DataRow("<ns:root xmlns:ns=\"urn:test\"/>")]
+    [DataRow("<!-- commentaire --><root/>")]
+    [DataRow("<!DOCTYPE root><root/>")]
+    [DataRow("  \r\n\t<root/>")]
+    public void IsXml_WithoutDeclaration_ReturnsTrue(string content)
     {
-        var fileBytes = Encoding.UTF8.GetBytes("<root>");
+        var fileBytes = Encoding.UTF8.GetBytes(content);
+
+        var result = FileTypeHelper.IsXml(fileBytes);
+
+        Check.That(result).IsTrue();
+    }
+
+    [TestMethod]
+    [DataRow("")]
+    [DataRow("   ")]
+    [DataRow("<")]
+    [DataRow("< root>")]
+    [DataRow("<1root>")]
+    [DataRow("Not XML")]
+    [DataRow("UNA:+.? 'UNB+UNOC:3")]
+    [DataRow("{\"key\":\"<root/>\"}")]
+    public void IsXml_WithInvalidXmlBytes_ReturnsFalse(string content)
+    {
+        var fileBytes = Encoding.UTF8.GetBytes(content);
 
         var result = FileTypeHelper.IsXml(fileBytes);
 
         Check.That(result).IsFalse();
+    }
+
+    [TestMethod]
+    public void IsXml_WithUblFileWithoutDeclaration_ReturnsTrue()
+    {
+        var fileBytes = Assembly.GetExecutingAssembly().Read("ubl_sans_prologue.xml").ReadAsByteArray();
+
+        var result = FileTypeHelper.IsXml(fileBytes);
+
+        Check.That(result).IsTrue();
+    }
+
+    [TestMethod]
+    public void IsXml_WithTextBeforeRootElement_ReturnsFalse()
+    {
+        var fileBytes = Assembly.GetExecutingAssembly().Read("ubl_texte_avant_racine.txt").ReadAsByteArray();
+
+        var result = FileTypeHelper.IsXml(fileBytes);
+
+        Check.That(result).IsFalse();
+    }
+
+    [TestMethod]
+    public void IsXml_WithUtf8BomWithoutDeclaration_ReturnsTrue()
+    {
+        var fileBytes = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes("<root/>")).ToArray();
+
+        var result = FileTypeHelper.IsXml(fileBytes);
+
+        Check.That(result).IsTrue();
+    }
+
+    [TestMethod]
+    [DataRow("<?xml version=\"1.0\" encoding=\"UTF-16\"?><root/>")]
+    [DataRow("<root/>")]
+    public void IsXml_WithUtf16LittleEndianBom_ReturnsTrue(string content)
+    {
+        var fileBytes = Encoding.Unicode.GetPreamble().Concat(Encoding.Unicode.GetBytes(content)).ToArray();
+
+        var result = FileTypeHelper.IsXml(fileBytes);
+
+        Check.That(result).IsTrue();
+    }
+
+    [TestMethod]
+    [DataRow("<?xml version=\"1.0\" encoding=\"UTF-16\"?><root/>")]
+    [DataRow("<root/>")]
+    public void IsXml_WithUtf16BigEndianBom_ReturnsTrue(string content)
+    {
+        var fileBytes = Encoding.BigEndianUnicode.GetPreamble().Concat(Encoding.BigEndianUnicode.GetBytes(content)).ToArray();
+
+        var result = FileTypeHelper.IsXml(fileBytes);
+
+        Check.That(result).IsTrue();
     }
 
     [TestMethod]

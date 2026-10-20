@@ -84,23 +84,44 @@ public static class FileTypeHelper
         return header[..read];
     }
 
+    /// <summary>
+    /// Indique si le contenu ressemble à un document XML, d'après ses premiers caractères (le document n'est pas parsé).
+    /// La déclaration "&lt;?xml ...?&gt;" étant optionnelle, un contenu commençant par un commentaire, un DOCTYPE
+    /// ou un élément racine est aussi reconnu ; un document HTML l'est donc également.
+    /// Les BOM UTF-8 et UTF-16 (LE/BE) sont pris en charge.
+    /// </summary>
     public static bool IsXml(byte[] fileBytes)
     {
         Guard.IsNotNull(nameof(fileBytes), fileBytes);
 
-        var startIndex = GetContentStartIndex(fileBytes);
-        if (startIndex >= fileBytes.Length)
+        var content = DecodeTextHeader(fileBytes, 256).TrimStart(' ', '\t', '\r', '\n');
+        if (content.Length < 2 || content[0] != '<')
         {
             return false;
         }
 
-        // Vérifier XML : "<?xml"
-        if (HasMagicBytes(fileBytes, startIndex, [0x3C, 0x3F, 0x78, 0x6D, 0x6C]))
-        {
-            return true;
-        }
+        return content.StartsWith("<?xml", StringComparison.Ordinal) ||
+               content.StartsWith("<!--", StringComparison.Ordinal) ||
+               content.StartsWith("<!DOCTYPE", StringComparison.Ordinal) ||
+               char.IsLetter(content[1]) ||
+               content[1] == '_' ||
+               content[1] == ':';
+    }
 
-        return false;
+    /// <summary>
+    /// Décode au plus <paramref name="maxByteCount" /> octets en texte, selon l'encodage indiqué par le BOM (UTF-8 par défaut).
+    /// </summary>
+    private static string DecodeTextHeader(byte[] bytes, int maxByteCount)
+    {
+        var (encoding, bomLength) = bytes switch
+        {
+            [0xEF, 0xBB, 0xBF, ..] => (Encoding.UTF8, 3),
+            [0xFF, 0xFE, ..] => (Encoding.Unicode, 2),
+            [0xFE, 0xFF, ..] => (Encoding.BigEndianUnicode, 2),
+            _ => (Encoding.UTF8, 0)
+        };
+
+        return encoding.GetString(bytes, bomLength, Math.Min(bytes.Length - bomLength, maxByteCount));
     }
 
     private static int GetContentStartIndex(byte[] bytes)
@@ -124,24 +145,6 @@ public static class FileTypeHelper
         }
 
         return index;
-    }
-
-    private static bool HasMagicBytes(byte[] fileBytes, int startIndex, byte[] magicBytes)
-    {
-        if (startIndex + magicBytes.Length > fileBytes.Length)
-        {
-            return false;
-        }
-
-        for (var i = 0; i < magicBytes.Length; i++)
-        {
-            if (fileBytes[startIndex + i] != magicBytes[i])
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     public static bool IsJson(byte[] fileBytes)
