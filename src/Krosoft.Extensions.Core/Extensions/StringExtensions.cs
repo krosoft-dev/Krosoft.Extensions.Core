@@ -34,6 +34,29 @@ public static class StringExtensions
     public static string? ClearFilePath(this string? text) => StringHelper.ClearFilePath(text);
 
     /// <summary>
+    /// Garantit qu'un nom de fichier porte l'extension donnée : l'ajoute s'il ne la porte pas déjà (comparaison insensible à la casse).
+    /// L'extension peut être fournie avec ou sans point (<c>xml</c> ou <c>.xml</c>).
+    /// </summary>
+    /// <param name="source">Nom de fichier.</param>
+    /// <param name="extension">Extension attendue, avec ou sans point.</param>
+    /// <returns>Le nom complété de l'extension, ou la valeur d'origine si elle est nulle, vide ou si l'extension est vide.</returns>
+    public static string? EnsureExtension(this string? source, string? extension)
+    {
+        var normalizedExtension = extension?.TrimStart('.');
+        if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(normalizedExtension))
+        {
+            return source;
+        }
+
+        if (source.EndsWith($".{normalizedExtension}", StringComparison.OrdinalIgnoreCase))
+        {
+            return source;
+        }
+
+        return $"{source}.{normalizedExtension}";
+    }
+
+    /// <summary>
     /// Garantit que la chaîne se termine par un seul '/'.
     /// Utile pour une <see cref="System.Net.Http.HttpClient.BaseAddress" /> afin que la combinaison avec une URL
     /// relative préserve le sous-chemin (ex. <c>/Machinus</c>) au lieu de l'écraser.

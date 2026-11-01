@@ -132,6 +132,24 @@ public class StringExtensionsTests
     }
 
     [TestMethod]
+    [DataRow("facture", "xml", "facture.xml")] // ajout de l'extension manquante
+    [DataRow("facture", ".xml", "facture.xml")] // extension fournie avec un point
+    [DataRow("facture.xml", "xml", "facture.xml")] // extension déjà présente, inchangé
+    [DataRow("facture.XML", "xml", "facture.XML")] // comparaison insensible à la casse
+    [DataRow("facture.xml", ".xml", "facture.xml")] // extension avec point déjà présente
+    [DataRow("facture.pdf", "xml", "facture.pdf.xml")] // autre extension : on ajoute
+    [DataRow("factxml", "xml", "factxml.xml")] // suffixe sans point : on ajoute
+    [DataRow("facture", "", "facture")] // extension vide, inchangé
+    [DataRow("facture", ".", "facture")] // extension réduite à un point, inchangé
+    [DataRow("facture", null, "facture")] // extension nulle, inchangé
+    [DataRow("", "xml", "")] // nom vide, inchangé
+    [DataRow(null, "xml", null)] // nom nul, inchangé
+    public void EnsureExtension_Ok(string? input, string? extension, string? expectedOutput)
+    {
+        Check.That(input.EnsureExtension(extension)).IsEqualTo(expectedOutput);
+    }
+
+    [TestMethod]
     [DataRow(null, null)]
     [DataRow("", "")]
     [DataRow("http://example.com", "http://example.com/")] // ajout du slash manquant
