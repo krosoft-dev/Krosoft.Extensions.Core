@@ -38,28 +38,28 @@ public class NullableDecimalConverterTests
     [TestMethod]
     [DataRow("           ", null, CultureFr)]
     [DataRow("null", null, CultureFr)]
-    [DataRow("999,45462", 999.45462, CultureFr)] 
-    [DataRow("5.45462", 5.45462, CultureFr)]
-    [DataRow("0,07", 0.07, CultureFr)]
-    [DataRow("0,42", 0.42, CultureFr)]
-    [DataRow("0.12", 0.12, CultureFr)]
+    [DataRow("999,45462", "999.45462", CultureFr)]
+    [DataRow("5.45462", "5.45462", CultureFr)]
+    [DataRow("0,07", "0.07", CultureFr)]
+    [DataRow("0,42", "0.42", CultureFr)]
+    [DataRow("0.12", "0.12", CultureFr)]
     [DataRow("test", null, CultureFr)]
-    [DataRow("0", 0.0, CultureFr)]
+    [DataRow("0", "0", CultureFr)]
     [DataRow("           ", null, CultureEn)]
     [DataRow("null", null, CultureEn)]
-    [DataRow("999,45462", 999.45462, CultureEn)] 
-    [DataRow("5.45462", 5.45462, CultureEn)]
-    [DataRow("0,07", 0.07, CultureEn)]
-    [DataRow("0,42", 0.42, CultureEn)]
-    [DataRow("0.12", 0.12, CultureEn)]
+    [DataRow("999,45462", "999.45462", CultureEn)]
+    [DataRow("5.45462", "5.45462", CultureEn)]
+    [DataRow("0,07", "0.07", CultureEn)]
+    [DataRow("0,42", "0.42", CultureEn)]
+    [DataRow("0.12", "0.12", CultureEn)]
     [DataRow("test", null, CultureEn)]
-    [DataRow("0", 0.0, CultureEn)]
-    public void ConvertJsonTest(string input, double? expected, string cultureName)
+    [DataRow("0", "0", CultureEn)]
+    public void ConvertJsonTest(string input, string? expected, string cultureName)
     {
         var json = $$""" { "ValeurDecimal": "{{input}}" } """;
 
         var obj = JsonConvert.DeserializeObject<Item>(json, new NullableDecimalConverter(new CultureInfo(cultureName)));
         Check.That(obj).IsNotNull();
-        Check.That(obj!.ValeurDecimal).IsEqualTo((decimal?)expected);
+        Check.That(obj!.ValeurDecimal).IsEqualTo(expected is null ? (decimal?)null : decimal.Parse(expected, CultureInfo.InvariantCulture));
     }
 }
