@@ -18,6 +18,7 @@ stages:
     parameters:
       vmImage: ${{ variables.vmImage }}
       dotNetVersion: ${{ variables.dotNetVersion }}
+      dotNetRuntimes: ["10.0.x"]
       buildConfiguration: ${{ variables.buildConfiguration }}
       buildPlatform: ${{ variables.buildPlatform }}
       buildProjects: ${{ variables.buildProjects }}
