@@ -1,6 +1,6 @@
 variables:
   # Agent VM image name
-  vmImage: "ubuntu-latest"
+  vmImage: "ubuntu-22.04"
 
   # .net
   dotNetVersion: "11.0.x"
