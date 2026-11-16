@@ -18,12 +18,8 @@ trigger:
       - src
       - Directory.Build.props
 
-variables:
-  - template: ./vars/vars.yml
-
 extends:
   template: tools/devops/templates/pipelines/nuget-template.yml@Krosoft.Extensions
   parameters:
-    dotNetVersion: ${{ variables.dotNetVersion }}
     packages:
       - "Krosoft.Extensions.Core"
