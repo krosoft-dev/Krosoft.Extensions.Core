@@ -1,4 +1,5 @@
-﻿using Krosoft.Extensions.Core.Helpers;
+﻿using System.Globalization;
+using Krosoft.Extensions.Core.Helpers;
 
 namespace Krosoft.Extensions.Core.Tests.Helpers;
 
@@ -6,16 +7,16 @@ namespace Krosoft.Extensions.Core.Tests.Helpers;
 public class NumberHelperTest
 {
     [TestMethod]
-    [DataRow("123.45", 123.45)]
-    [DataRow("-789.12", -789.12)]
-    [DataRow("42", 42)]
-    [DataRow("abc", 0)]
-    [DataRow(null, 0)]
-    public void ToDecimal_ShouldConvertStringToDecimal(string input, double expectedResult)
+    [DataRow("123.45", "123.45")]
+    [DataRow("-789.12", "-789.12")]
+    [DataRow("42", "42")]
+    [DataRow("abc", "0")]
+    [DataRow(null, "0")]
+    public void ToDecimal_ShouldConvertStringToDecimal(string input, string expectedResult)
     {
         var result = NumberHelper.ToDecimal(input);
 
-        Check.That(result).IsEqualTo((decimal)expectedResult);
+        Check.That(result).IsEqualTo(decimal.Parse(expectedResult, CultureInfo.InvariantCulture));
     }
 
     [TestMethod]
